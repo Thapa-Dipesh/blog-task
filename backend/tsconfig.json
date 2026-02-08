@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "target": "ES2023",
+    "module": "NodeNext", // Essential for modern Node.js
+    "moduleResolution": "NodeNext", // Essential for modern Node.js
+    "outDir": "./dist", // Where compiled JS goes
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "sourceMap": true
+  },
+  "include": ["src/**/*", "prisma.config.ts"],
+  "exclude": ["node_modules"]
+}
