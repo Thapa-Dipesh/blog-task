@@ -36,6 +36,14 @@ export const postApi = createApi({
       transformResponse: (response: ApiResponse) => response.posts,
       providesTags: ["Posts"],
     }),
+    getUserPosts: builder.query<Post[], void>({
+      query: () => ({
+        url: "/api/post/my-posts",
+        method: "GET",
+      }),
+      transformResponse: (response: ApiResponse) => response.posts,
+      providesTags: ["Posts"],
+    }),
     getPostById: builder.query<Post, string>({
       query: (id) => ({
         url: `/api/post/posts/${id}`,
@@ -77,4 +85,5 @@ export const {
   useUpdatePostMutation,
   useGetPostByIdQuery,
   useGetPostsQuery,
+  useGetUserPostsQuery,
 } = postApi;

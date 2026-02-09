@@ -4,6 +4,7 @@ import {
   deletePost,
   getPostById,
   getPosts,
+  getUserPosts,
   updatePost,
 } from "../controller/post.controller.js";
 import { authenticate } from "../middleware/auth.middleware.js";
@@ -12,6 +13,7 @@ import { upload } from "../config/cloudinary.config.js";
 const router = express.Router();
 
 router.post("/create", authenticate, upload.single("image"), createPost);
+router.get("/my-posts", authenticate, getUserPosts);
 router.get("/posts", getPosts);
 router.get("/posts/:id", getPostById);
 router.put("/posts/:id", authenticate, upload.single("image"), updatePost);

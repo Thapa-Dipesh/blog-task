@@ -3,12 +3,13 @@ import { Edit3, Trash2, Eye, Plus, Search, Filter } from "lucide-react";
 // import { posts } from "../mockData";
 import {
   useDeletePostMutation,
-  useGetPostsQuery,
+  useGetUserPostsQuery,
 } from "../features/api/postApi";
 
 const AllBlogs = () => {
   const [deletePost] = useDeletePostMutation();
-  const { data: posts, isLoading } = useGetPostsQuery();
+  const { data: posts, isLoading } = useGetUserPostsQuery();
+  
 
   const handleDelete = async (id: number | string) => {
     if (window.confirm("Are you sure you want to delete this post?")) {
