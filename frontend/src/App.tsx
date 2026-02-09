@@ -1,5 +1,13 @@
+import { Toaster } from "react-hot-toast";
+import Routes from "./components/Routes";
+
 function App() {
-  return <div className="bg-red-600">Hello</div>;
+  return (
+    <>
+      <Routes />
+      <Toaster />
+    </>
+  );
 }
 
 export default App;
