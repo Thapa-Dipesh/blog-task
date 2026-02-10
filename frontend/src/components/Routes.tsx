@@ -21,7 +21,7 @@ const Routes = () => {
         <Route path="" element={<HomePage />} />
         <Route path="/signup" element={<RegisterUser />} />
         <Route path="/login" element={<LoginPage />} />
-        <Route path="/post/:id" element={<SinglePost />} />
+        <Route path="/blog/:id" element={<SinglePost />} />
 
         <Route element={<ProtectedRoute />}>
           <Route path="/create" element={<CreatePost />} />
