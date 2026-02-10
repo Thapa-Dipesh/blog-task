@@ -8,9 +8,12 @@ const SinglePost = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <h2 className="text-2xl font-bold">Loading...</h2>
+      <div className="min-h-screen flex items-center justify-center bg-white">
+        <div className="flex flex-col items-center gap-4">
+          <div className="w-12 h-12 border-4 border-slate-100 border-t-orange-600 rounded-full animate-spin"></div>
+          <div className="text-slate-400 font-bold text-xs uppercase tracking-[0.3em] animate-pulse">
+            Retrieving Post Data...
+          </div>
         </div>
       </div>
     );
@@ -32,6 +35,7 @@ const SinglePost = () => {
   return (
     <div className="bg-white min-h-screen pb-20">
       <article className="max-w-4xl mx-auto px-6 pt-12">
+        <title>{`${post.title} | KODEX`}</title>
         {/* 2. Back Button */}
         <Link
           to="/"

@@ -31,6 +31,7 @@ const RegisterUser = () => {
 
   return (
     <div className="min-h-screen bg-white flex items-center justify-center p-6">
+      <title>Register | KODEX</title>
       <div className="max-w-5xl w-full grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
         {/* Left Column: Visual/Marketing */}
         <div className="hidden lg:flex flex-col space-y-8">

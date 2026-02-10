@@ -61,6 +61,7 @@ const CreatePost = () => {
 
   return (
     <div className="min-h-screen bg-slate-50">
+      <title>Create Post | KODEX</title>
       <main className="mx-auto max-w-7xl px-8 py-10">
         <form
           onSubmit={handleSubmit}
@@ -84,7 +85,7 @@ const CreatePost = () => {
                 <div className="flex items-center gap-2 text-slate-400 border-b border-slate-100 pb-4">
                   <Globe size={14} />
                   <span className="text-xs font-mono">
-                    growssence.com/blog/
+                    mykodex.netlify.app/blog/
                   </span>
                   <input
                     type="text"

@@ -54,8 +54,13 @@ const EditBlog = () => {
 
   if (isFetching)
     return (
-      <div className="flex h-screen items-center justify-center font-mono text-slate-400 animate-pulse">
-        Retrieving Post Data...
+      <div className="min-h-screen flex items-center justify-center bg-white">
+        <div className="flex flex-col items-center gap-4">
+          <div className="w-12 h-12 border-4 border-slate-100 border-t-orange-600 rounded-full animate-spin"></div>
+          <div className="text-slate-400 font-bold text-xs uppercase tracking-[0.3em] animate-pulse">
+            Retrieving Post Data...
+          </div>
+        </div>
       </div>
     );
 
@@ -90,6 +95,9 @@ const EditBlog = () => {
 
   return (
     <div className="min-h-screen bg-[#FDFDFD]">
+      <title>
+        {postData ? `Editing: ${postData.title}` : "Loading Post..."}
+      </title>
       {/* Action Bar */}
       <header className="sticky top-0 z-30 border-b bg-white/80 backdrop-blur-md px-8 py-4">
         <div className="max-w-7xl mx-auto flex items-center justify-between">

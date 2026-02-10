@@ -39,7 +39,7 @@ const LoginPage = () => {
 
   return (
     <div className="min-h-screen bg-white flex max-w-5xl mx-auto">
-      
+      <title>Login | KODEX</title>
       {/* left-side */}
       <div className="hidden lg:flex w-1/2 flex-col justify-center space-y-12 p-12">
         <div className="hidden lg:flex flex-col space-y-8">
@@ -170,11 +170,7 @@ const LoginPage = () => {
               disabled={isLoading}
               className="w-full flex justify-center items-center py-4 px-4 rounded-2xl text-base font-bold text-white bg-slate-900 hover:bg-slate-800 transition-all duration-200 transform active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed shadow-xl shadow-slate-200 cursor-pointer"
             >
-              {isLoading ? (
-                <div className="w-6 h-6 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-              ) : (
-                "Sign In"
-              )}
+              {isLoading ? "Signing in..." : "Sign In"}
             </button>
 
             {/* Divider */}

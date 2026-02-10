@@ -1,5 +1,13 @@
 import { Link } from "react-router-dom";
-import { Edit3, Trash2, Eye, Plus, Search, Filter } from "lucide-react";
+import {
+  Edit3,
+  Trash2,
+  Eye,
+  Plus,
+  Search,
+  Filter,
+  Loader2,
+} from "lucide-react";
 // import { posts } from "../mockData";
 import {
   useDeletePostMutation,
@@ -9,7 +17,6 @@ import {
 const AllBlogs = () => {
   const [deletePost] = useDeletePostMutation();
   const { data: posts, isLoading } = useGetUserPostsQuery();
-  
 
   const handleDelete = async (id: number | string) => {
     if (window.confirm("Are you sure you want to delete this post?")) {
@@ -23,9 +30,12 @@ const AllBlogs = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-50">
-        <div className="text-slate-500 font-medium animate-pulse">
-          Loading Data...
+      <div className="min-h-screen flex items-center justify-center bg-white">
+        <div className="flex flex-col items-center gap-4">
+          <div className="w-12 h-12 border-4 border-slate-100 border-t-orange-600 rounded-full animate-spin"></div>
+          <div className="text-slate-400 font-bold text-xs uppercase tracking-[0.3em] animate-pulse">
+            Initializing Blogs
+          </div>
         </div>
       </div>
     );
@@ -33,6 +43,7 @@ const AllBlogs = () => {
 
   return (
     <div className="min-h-screen bg-slate-50 py-10 px-8">
+      <title>Content Manager | KODEX</title>
       <div className="max-w-6xl mx-auto">
         {/* Header Section */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-10">
@@ -79,7 +90,7 @@ const AllBlogs = () => {
         </div>
 
         {/* The Table */}
-        <div className="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden">
+        <div className="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-auto">
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="bg-slate-50/50 border-b border-slate-100">
@@ -131,7 +142,7 @@ const AllBlogs = () => {
                   <td className="px-6 py-4">
                     <div className="flex items-center justify-end gap-2">
                       <Link
-                        to={`/post/${post.id}`}
+                        to={`/blog/${post.id}`}
                         className="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all"
                         title="View Live"
                       >
