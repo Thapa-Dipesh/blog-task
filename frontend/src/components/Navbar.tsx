@@ -78,7 +78,7 @@ const Navbar = () => {
         <div className="flex items-center justify-center gap-4">
           {isLoggedIn ? (
             <>
-              <p>{user?.name}</p>
+              <p>{user?.name.split(" ")[0]}</p>
               <button
                 onClick={handleLogout}
                 className="inline-flex items-center justify-center rounded-full bg-slate-900 px-5 py-2 text-sm font-semibold text-white shadow-sm hover:bg-slate-800 transition-all duration-200 active:scale-95 cursor-pointer"

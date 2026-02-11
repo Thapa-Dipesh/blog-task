@@ -1,12 +1,10 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 
-
 // 1. Define the shape of your User object
 interface User {
   id: string;
   email: string;
-  name?: string;
-  role?: string; // e.g., 'admin'
+  name: string;
 }
 
 // 2. Define the shape of the entire Auth State
@@ -28,8 +26,8 @@ const authSlice = createSlice({
   initialState,
   reducers: {
     // 4. Use PayloadAction<User> to type the action parameter
-    setCredentials: (state, action: PayloadAction<User>) => {
-      state.user = action.payload;
+    setCredentials: (state, action: PayloadAction<{ user: User }>) => {
+      state.user = action.payload.user;
       state.isLoggedIn = true;
       state.isFetching = false;
     },
@@ -44,5 +42,7 @@ const authSlice = createSlice({
 export const { setCredentials, logOut } = authSlice.actions;
 export default authSlice.reducer;
 
-export const selectCurrentUser = (state: { auth: AuthState }) => state.auth.user;
-export const selectIsLoggedIn = (state: { auth: AuthState }) => state.auth.isLoggedIn;
+export const selectCurrentUser = (state: { auth: AuthState }) =>
+  state.auth.user;
+export const selectIsLoggedIn = (state: { auth: AuthState }) =>
+  state.auth.isLoggedIn;
