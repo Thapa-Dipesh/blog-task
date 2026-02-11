@@ -119,7 +119,7 @@ const HomePage = () => {
                     <h3
                       className={`${isFeatured ? "text-5xl" : "text-3xl"} font-black text-slate-900 tracking-tight leading-tight group-hover:text-orange-600 transition-colors`}
                     >
-                      <Link to={`/blog/${post.id}`}>{post.title}</Link>
+                      <Link to={`/blog/${post.slug}`}>{post.title}</Link>
                     </h3>
 
                     <p className="text-slate-500 mt-6 mb-10 text-lg leading-relaxed line-clamp-3">
@@ -127,7 +127,7 @@ const HomePage = () => {
                     </p>
 
                     <Link
-                      to={`/blog/${post.id}`}
+                      to={`/blog/${post.slug}`}
                       className="inline-flex items-center gap-2 text-xs font-black uppercase tracking-[0.2em] text-slate-900 hover:text-orange-600 transition-all"
                     >
                       Continue Reading

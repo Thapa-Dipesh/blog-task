@@ -44,9 +44,9 @@ export const postApi = createApi({
       transformResponse: (response: ApiResponse) => response.posts,
       providesTags: ["Posts"],
     }),
-    getPostById: builder.query<Post, string>({
-      query: (id) => ({
-        url: `/api/post/posts/${id}`,
+    getPostBySlug: builder.query<Post, string>({
+      query: (slug) => ({
+        url: `/api/post/posts/${slug}`,
         method: "GET",
       }),
       transformResponse: (response: { post: Post } | Post) => {
@@ -62,8 +62,8 @@ export const postApi = createApi({
       invalidatesTags: ["Posts"],
     }),
     updatePost: builder.mutation({
-      query: ({ id, ...formData }) => ({
-        url: `/api/post/posts/${id}`,
+      query: ({ slug, ...formData }) => ({
+        url: `/api/post/posts/${slug}`,
         method: "PUT",
         body: formData,
       }),
@@ -83,7 +83,7 @@ export const {
   useCreatePostMutation,
   useDeletePostMutation,
   useUpdatePostMutation,
-  useGetPostByIdQuery,
+  useGetPostBySlugQuery,
   useGetPostsQuery,
   useGetUserPostsQuery,
 } = postApi;

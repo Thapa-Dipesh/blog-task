@@ -21,12 +21,12 @@ const Routes = () => {
         <Route path="" element={<HomePage />} />
         <Route path="/signup" element={<RegisterUser />} />
         <Route path="/login" element={<LoginPage />} />
-        <Route path="/blog/:id" element={<SinglePost />} />
+        <Route path="/blog/:slug" element={<SinglePost />} />
 
         <Route element={<ProtectedRoute />}>
           <Route path="/create" element={<CreatePost />} />
           <Route path="/my-blogs" element={<AllBlogs />} />
-          <Route path="/edit/:id" element={<EditBlog />} />
+          <Route path="/edit/:slug" element={<EditBlog />} />
         </Route>
       </Route>,
     ),

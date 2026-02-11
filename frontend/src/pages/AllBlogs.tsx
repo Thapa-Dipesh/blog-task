@@ -1,14 +1,5 @@
 import { Link } from "react-router-dom";
-import {
-  Edit3,
-  Trash2,
-  Eye,
-  Plus,
-  Search,
-  Filter,
-  Loader2,
-} from "lucide-react";
-// import { posts } from "../mockData";
+import { Edit3, Trash2, Eye, Plus, Search, Filter } from "lucide-react";
 import {
   useDeletePostMutation,
   useGetUserPostsQuery,
@@ -142,14 +133,14 @@ const AllBlogs = () => {
                   <td className="px-6 py-4">
                     <div className="flex items-center justify-end gap-2">
                       <Link
-                        to={`/blog/${post.id}`}
+                        to={`/blog/${post.slug}`}
                         className="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all"
                         title="View Live"
                       >
                         <Eye size={18} />
                       </Link>
                       <Link
-                        to={`/edit/${post.id}`}
+                        to={`/edit/${post.slug}`}
                         className="p-2 text-slate-400 hover:text-amber-600 hover:bg-amber-50 rounded-lg transition-all"
                         title="Edit Post"
                       >

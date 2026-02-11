@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, use } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import {
   Save,
@@ -9,7 +9,7 @@ import {
   Image as ImageIcon,
 } from "lucide-react";
 import {
-  useGetPostByIdQuery,
+  useGetPostBySlugQuery,
   useUpdatePostMutation,
   useDeletePostMutation,
 } from "../features/api/postApi";
@@ -17,11 +17,12 @@ import toast from "react-hot-toast";
 
 const EditBlog = () => {
   const { id } = useParams();
+  const { slug } = useParams();
   const navigate = useNavigate();
 
   // 1. RTK Query Hooks
-  const { data: postData, isLoading: isFetching } = useGetPostByIdQuery(
-    id as string,
+  const { data: postData, isLoading: isFetching } = useGetPostBySlugQuery(
+    slug as string,
   );
   const [updatePost, { isLoading: isUpdating }] = useUpdatePostMutation();
   const [deletePost] = useDeletePostMutation();
@@ -73,7 +74,7 @@ const EditBlog = () => {
   const handleUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await updatePost({ id, ...formData }).unwrap();
+      await updatePost({ ...formData, slug: postData?.slug }).unwrap();
       toast.success("Post updated successfully!");
       navigate("/my-blogs");
     } catch (error: any) {

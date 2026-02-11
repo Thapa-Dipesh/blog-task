@@ -2,7 +2,7 @@ import express from "express";
 import {
   createPost,
   deletePost,
-  getPostById,
+  getPostBySlug,
   getPosts,
   getUserPosts,
   updatePost,
@@ -15,8 +15,8 @@ const router = express.Router();
 router.post("/create", authenticate, upload.single("image"), createPost);
 router.get("/my-posts", authenticate, getUserPosts);
 router.get("/posts", getPosts);
-router.get("/posts/:id", getPostById);
-router.put("/posts/:id", authenticate, upload.single("image"), updatePost);
+router.get("/posts/:slug", getPostBySlug);
+router.put("/posts/:slug", authenticate, upload.single("image"), updatePost);
 router.delete("/posts/:id", authenticate, deletePost);
 
 export default router;

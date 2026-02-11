@@ -3,15 +3,8 @@ import { prisma } from "../config/db.config.js";
 
 export const createPost = async (req: Request, res: Response) => {
   try {
-    const {
-      title,
-      description,
-      slug,
-      metaTitle,
-      metaDescription,
-      keywords,
-      image,
-    } = req.body;
+    const { title, description, slug, metaTitle, metaDescription, keywords } =
+      req.body;
 
     const imageUrl = req.file ? req.file.path : null;
 
@@ -21,12 +14,21 @@ export const createPost = async (req: Request, res: Response) => {
       });
     }
 
+    let finalSlug = slug;
+    const count = await prisma.blogPost.count({
+      where: { slug: { startsWith: slug } },
+    });
+
+    if (count > 0) {
+      finalSlug = `${slug}-${count + 1}`; // Turns "my-post" into "my-post-1"
+    }
+
     const post = await prisma.blogPost.create({
       data: {
         title,
         description,
-        slug,
-        image: imageUrl,
+        slug: finalSlug,
+        image: imageUrl || "default-image.jpg",
         metaTitle,
         metaDescription,
         keywords,
@@ -96,13 +98,13 @@ export const getUserPosts = async (req: Request, res: Response) => {
   }
 };
 
-export const getPostById = async (req: Request, res: Response) => {
+export const getPostBySlug = async (req: Request, res: Response) => {
   try {
-    const { id } = req.params;
+    const { slug } = req.params;
 
     const post = await prisma.blogPost.findUnique({
       where: {
-        id: Number(id),
+        slug: slug as string,
       },
       include: {
         author: {
@@ -112,6 +114,12 @@ export const getPostById = async (req: Request, res: Response) => {
         },
       },
     });
+
+    if (!post) {
+      return res.status(404).json({
+        message: "Post not found",
+      });
+    }
 
     return res.status(200).json({
       post,
@@ -126,13 +134,13 @@ export const getPostById = async (req: Request, res: Response) => {
 
 export const updatePost = async (req: Request, res: Response) => {
   try {
-    const { id } = req.params;
+    const { slug:oldSlug } = req.params;
     const { title, description, slug, metaTitle, metaDescription, keywords } =
       req.body;
 
     const post = await prisma.blogPost.update({
       where: {
-        id: Number(id),
+        slug: oldSlug as string,
       },
       data: {
         title,
@@ -162,7 +170,7 @@ export const deletePost = async (req: Request, res: Response) => {
 
     const post = await prisma.blogPost.delete({
       where: {
-        id: Number(id),
+        id: id as string,
       },
     });
 

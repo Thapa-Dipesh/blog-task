@@ -1,10 +1,10 @@
 import { useParams, Link } from "react-router-dom";
 import { Clock, ArrowLeft, Share2, Twitter, Linkedin } from "lucide-react";
-import { useGetPostByIdQuery } from "../features/api/postApi";
+import { useGetPostBySlugQuery } from "../features/api/postApi";
 
 const SinglePost = () => {
-  const { id } = useParams<{ id: string }>();
-  const { data: post, isLoading } = useGetPostByIdQuery(id || "");
+  const { slug } = useParams<{ slug: string }>();
+  const { data, isLoading } = useGetPostBySlugQuery(slug || "");
 
   if (isLoading) {
     return (
@@ -19,7 +19,7 @@ const SinglePost = () => {
     );
   }
 
-  if (!post) {
+  if (!data) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
@@ -35,7 +35,7 @@ const SinglePost = () => {
   return (
     <div className="bg-white min-h-screen pb-20">
       <article className="max-w-4xl mx-auto px-6 pt-12">
-        <title>{`${post.title} | KODEX`}</title>
+        <title>{`${data.title} | KODEX`}</title>
         {/* 2. Back Button */}
         <Link
           to="/"
@@ -59,7 +59,7 @@ const SinglePost = () => {
           </div>
 
           <h1 className="text-4xl md:text-6xl font-black text-slate-900 tracking-tighter leading-[1.1] mb-8">
-            {post?.title}
+            {data?.title}
           </h1>
 
           <div className="flex items-center justify-between border-y border-slate-100 py-6">
@@ -71,11 +71,13 @@ const SinglePost = () => {
                 />
               </div>
               <div>
-                <div className="font-bold text-slate-900">Admin User</div>
+                <div className="font-bold text-slate-900">
+                  {data?.author?.name}
+                </div>
                 <div className="text-xs text-slate-500">
                   Published on{" "}
-                  {post?.createdAt
-                    ? new Date(post.createdAt).toLocaleDateString()
+                  {data?.createdAt
+                    ? new Date(data.createdAt).toLocaleDateString()
                     : "Loading..."}
                 </div>
               </div>
@@ -98,8 +100,8 @@ const SinglePost = () => {
         {/* 4. Featured Image */}
         <div className="mb-16">
           <img
-            src={post?.image}
-            alt={post?.title}
+            src={data?.image}
+            alt={data?.title}
             className="w-full h-[500px] object-cover rounded-[2rem] shadow-2xl shadow-slate-200"
           />
         </div>
@@ -111,17 +113,17 @@ const SinglePost = () => {
                to render the HTML content from your DB.
             */}
             <p className="text-xl leading-relaxed text-slate-700 mb-8 font-medium italic border-l-4 border-orange-500 pl-6">
-              {post?.metaDescription}
+              {data?.metaDescription}
             </p>
 
             <div className="whitespace-pre-line text-lg leading-relaxed text-slate-800">
-              {post?.description}
+              {data?.description}
             </div>
           </div>
 
           {/* 6. Tags/Keywords Section */}
           <div className="mt-16 pt-8 border-t border-slate-100 flex flex-wrap gap-2">
-            {post?.keywords?.split(",").map((tag) => (
+            {data?.keywords?.split(",").map((tag) => (
               <span
                 key={tag}
                 className="text-xs font-mono bg-slate-50 text-slate-500 px-3 py-1 rounded-md"
