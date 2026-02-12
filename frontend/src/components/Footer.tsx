@@ -17,7 +17,9 @@ const Footer = () => {
               className="text-2xl font-black tracking-tighter text-slate-900 group"
             >
               KODEX
-              <span className="text-orange-500 group-hover:animate-pulse">.</span>
+              <span className="text-orange-500 group-hover:animate-pulse">
+                .
+              </span>
             </Link>
             <p className="text-slate-500 text-xs font-medium mt-3 leading-relaxed tracking-wide uppercase">
               Engineering the narrative of <br />
@@ -83,7 +85,7 @@ const Footer = () => {
           <div className="flex items-center gap-2 text-slate-300">
             <Zap size={12} className="fill-slate-300" />
             <p className="text-[10px] font-bold uppercase tracking-widest">
-              &copy; {new Date().getFullYear()} KODEX Labs
+              &copy; {new Date().getFullYear()} KODEX
             </p>
           </div>
 

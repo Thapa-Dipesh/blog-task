@@ -92,10 +92,6 @@ const LoginPage = () => {
             </div>
           </div>
         </div>
-
-        <p className="text-xs font-bold text-slate-300 uppercase tracking-[0.2em]">
-          Growssence Admin Portal v2.0
-        </p>
       </div>
 
       {/* Right Side: Login Form */}
