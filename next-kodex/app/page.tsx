@@ -1,3 +1,9 @@
+import HeroSection from "@/components/landing/HeroSection";
+
 export default function Home() {
-  return <div>Refinement on the nextjs app</div>;
+  return (
+    <div>
+      <HeroSection />
+    </div>
+  );
 }
