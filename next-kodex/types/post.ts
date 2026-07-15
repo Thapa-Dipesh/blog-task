@@ -8,7 +8,10 @@ export interface Post {
   createdAt: string;
   updatedAt: string;
   published: boolean;
+  keywords?: string;
   authorId?: string;
+  metaTitle?: string;
+  metaDescription?: string;
   author?: {
     id: string;
     name: string;

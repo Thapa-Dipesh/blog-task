@@ -20,7 +20,7 @@ class ApiClient {
     }
 
     const data = await res.json();
-    return data.posts || data;
+    return data.post || data.posts || data.data || data;
   }
 
   getPosts() {
