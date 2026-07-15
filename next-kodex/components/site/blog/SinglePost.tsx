@@ -1,6 +1,7 @@
 import { ArrowLeft, Clock, Share2 } from "lucide-react";
 import Link from "next/link";
 import { Post } from "@/types/post";
+import { LinkedinIcon, TwitterIcon } from "@/constants/SocialIcon";
 
 interface SinglePostProps {
   post: Post;
@@ -63,11 +64,17 @@ export function SinglePost({ post }: SinglePostProps) {
             </div>
 
             <div className="flex gap-2">
-              <button className="p-2 hover:bg-slate-50 rounded-full transition-colors text-slate-400 hover:text-blue-400">
-                twitter
+              <button
+                className="p-2 hover:bg-slate-50 rounded-full transition-colors text-slate-400 hover:text-blue-400"
+                aria-label="Share on Twitter"
+              >
+                <TwitterIcon size={20} />
               </button>
-              <button className="p-2 hover:bg-slate-50 rounded-full transition-colors text-slate-400 hover:text-blue-700">
-                linkedin
+              <button
+                className="p-2 hover:bg-slate-50 rounded-full transition-colors text-slate-400 hover:text-blue-700"
+                aria-label="Share on LinkedIn"
+              >
+                <LinkedinIcon size={20} />
               </button>
               <button className="p-2 hover:bg-slate-50 rounded-full transition-colors text-slate-400 hover:text-slate-900">
                 <Share2 size={20} />
