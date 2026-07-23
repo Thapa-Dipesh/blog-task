@@ -1,83 +1,63 @@
+// app/(dashboard)/actions.ts
 "use server";
 
 import { url } from "@/constants/api";
-import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
+import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 
-export async function getMyPosts() {
+async function getToken() {
   const token = (await cookies()).get("token")?.value;
-
-  if (!token) {
-    throw new Error("Not authenticated");
-  }
-
-  const res = await fetch(`${url}/api/post/my-posts`, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-    cache: "no-store",
-  });
-
-  if (!res.ok) {
-    throw new Error("Failed to fetch posts");
-  }
-
-  const data = await res.json();
-  return data.posts || [];
+  if (!token) throw new Error("Not authenticated");
+  return token;
 }
 
-// Create a new post
+// Create a post
 export async function createPost(formData: FormData) {
-  const token = (await cookies()).get("token")?.value;
+  const token = await getToken();
 
-  if (!token) {
-    throw new Error("Not authenticated");
-  }
-
-  const res = await fetch(`${url}/api/post/create`, {
+  const res = await fetch(`${url}/api/post/posts`, {
     method: "POST",
     headers: {
       Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json",
     },
-    body: JSON.stringify({ title: formData.get("title") as string }),
+    body: formData, // FormData for file upload
   });
 
   if (!res.ok) {
-    throw new Error("Failed to create post");
+    const data = await res.json();
+    throw new Error(data.message || "Failed to create post");
   }
 
-  const data = await res.json();
-  return data.post || data.posts || data.data || data;
+  revalidatePath("/dashboard/posts");
+  revalidatePath("/");
+  redirect("/dashboard/blogs");
 }
 
 // Update a post
-export async function updatePost(formData: FormData) {
-  const token = (await cookies()).get("token")?.value;
+export async function updatePost(id: string, formData: FormData) {
+  const token = await getToken();
 
-  if (!token) {
-    throw new Error("Not authenticated");
-  }
-
-  const res = await fetch(`${url}/api/post/update`, {
+  const res = await fetch(`${url}/api/post/posts/${id}`, {
     method: "PUT",
     headers: {
       Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json",
     },
-    body: JSON.stringify({ title: formData.get("title") as string }),
+    body: formData,
   });
 
   if (!res.ok) {
-    throw new Error("Failed to update post");
+    const data = await res.json();
+    throw new Error(data.message || "Failed to update post");
   }
 
-  const data = await res.json();
-  return data.post || data.posts || data.data || data;
+  revalidatePath("/dashboard/posts");
+  revalidatePath(`/blog/${formData.get("slug")}`);
+  revalidatePath("/");
+  redirect("/dashboard/blogs");
 }
 
 // Delete a post
-
 export async function deletePost(id: string) {
   const token = (await cookies()).get("token")?.value;
 
@@ -96,5 +76,5 @@ export async function deletePost(id: string) {
     throw new Error("Failed to delete post");
   }
 
-  revalidatePath("/dashboard/posts");
+  revalidatePath("/dashboard/blogs");
 }
