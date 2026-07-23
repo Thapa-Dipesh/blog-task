@@ -55,7 +55,7 @@ export function PostsTable({ posts }: PostsTableProps) {
           </div>
 
           <Link
-            href="/dashboard/blogs/create"
+            href="/admin/blogs/create"
             className="flex items-center gap-2 bg-slate-900 hover:bg-slate-800 text-white px-6 py-3 rounded-2xl font-bold transition-all shadow-lg shadow-gray-200 active:scale-95 w-fit"
           >
             <Plus size={18} />
@@ -156,7 +156,7 @@ export function PostsTable({ posts }: PostsTableProps) {
                         <Eye size={18} />
                       </Link>
                       <Link
-                        href={`/dashboard/posts/${post.id}/edit`}
+                        href={`/admin/blogs/edit/${post.slug}`}
                         className="p-2 text-slate-400 hover:text-amber-600 hover:bg-amber-50 rounded-lg transition-all"
                         title="Edit Post"
                       >
