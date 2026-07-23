@@ -102,7 +102,7 @@ const SinglePost = () => {
           <img
             src={data?.image}
             alt={data?.title}
-            className="w-full h-[500px] object-cover rounded-[2rem] shadow-2xl shadow-slate-200"
+            className="w-full h-125 object-cover rounded-4xl shadow-2xl shadow-slate-200"
           />
         </div>
 

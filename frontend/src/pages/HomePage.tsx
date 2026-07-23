@@ -94,7 +94,7 @@ const HomePage = () => {
                     <img
                       src={post.image}
                       alt={post.title}
-                      className="w-full h-[450px] md:h-[320px] object-cover transition-transform duration-700 group-hover:scale-110"
+                      className="w-full h-112.5 md:h-80 object-cover transition-transform duration-700 group-hover:scale-110"
                     />
                   </div>
 
