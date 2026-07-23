@@ -16,7 +16,7 @@ async function getToken() {
 export async function createPost(formData: FormData) {
   const token = await getToken();
 
-  const res = await fetch(`${url}/api/post/posts`, {
+  const res = await fetch(`${url}/api/post/create`, {
     method: "POST",
     headers: {
       Authorization: `Bearer ${token}`,
