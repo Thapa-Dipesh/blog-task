@@ -4,9 +4,20 @@ import { url } from "@/constants/api";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
-export async function userlogin(prevState: unknown, formData: FormData) {
+interface AuthState {
+  error?: string;
+}
+
+export async function userLogin(
+  prevState: AuthState | null,
+  formData: FormData,
+): Promise<AuthState | never> {
   const email = formData.get("email") as string;
   const password = formData.get("password") as string;
+
+  if (!email || !password) {
+    return { error: "Email and password are required" };
+  }
 
   let token: string | null = null;
 

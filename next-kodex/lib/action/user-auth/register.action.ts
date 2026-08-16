@@ -3,10 +3,25 @@
 import { url } from "@/constants/api";
 import { redirect } from "next/navigation";
 
-export async function userRegister(prevState: unknown, formData: FormData) {
+interface AuthState {
+  error?: string;
+}
+
+export async function userRegister(
+  prevState: AuthState | null,
+  formData: FormData,
+): Promise<AuthState | never> {
   const name = formData.get("name") as string;
   const email = formData.get("email") as string;
   const password = formData.get("password") as string;
+
+  if (!name || !email || !password) {
+    return { error: "All fields are required" };
+  }
+
+  if (password.length < 6) {
+    return { error: "Password must be at least 6 characters" };
+  }
 
   try {
     const res = await fetch(`${url}/api/user/signup`, {
@@ -19,14 +34,12 @@ export async function userRegister(prevState: unknown, formData: FormData) {
 
     if (!res.ok) {
       return {
-        error:
-          data.message ||
-          "Registration failed. Please try again. Please try again.",
+        error: data.message || "Registration failed. Please try again.",
       };
     }
   } catch (error) {
     return { error: "Something went wrong. Please try again." };
   }
 
-  redirect("/admin/login");
+  redirect("/login");
 }

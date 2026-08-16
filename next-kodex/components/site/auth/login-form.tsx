@@ -3,11 +3,11 @@
 import { useActionState } from "react";
 import Link from "next/link";
 import { Lock, Mail } from "lucide-react";
-import { userlogin } from "@/lib/action/user-auth/login.action";
+import { userLogin } from "@/lib/action/user-auth/login.action";
 import { GithubIcon } from "@/constants/SocialIcon";
 
 export function LoginForm() {
-  const [state, formAction, isPending] = useActionState(userlogin, null);
+  const [state, formAction, isPending] = useActionState(userLogin, null);
 
   return (
     <div className="w-full lg:w-1/2 flex items-center justify-center p-8 lg:p-24">
