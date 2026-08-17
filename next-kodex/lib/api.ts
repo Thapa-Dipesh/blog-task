@@ -23,6 +23,7 @@ class ApiClient {
     return data.post || data.posts || data.data || data;
   }
 
+  // Public routes (no auth)
   getPosts() {
     return this.request<Post[]>("/api/post/posts");
   }
@@ -33,6 +34,24 @@ class ApiClient {
 
   getAuthorPosts(username: string) {
     return this.request<Post[]>(`/api/post/author/${username}`);
+  }
+
+  // Auth routes (need token)
+  getMyPosts(token: string) {
+    return this.request<Post[]>("/api/post/my-posts", {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+  }
+
+  getMe(token: string) {
+    return this.request<{
+      id: string;
+      name: string;
+      email: string;
+      role: string;
+    }>("/api/user/profile", {
+      headers: { Authorization: `Bearer ${token}` },
+    });
   }
 }
 

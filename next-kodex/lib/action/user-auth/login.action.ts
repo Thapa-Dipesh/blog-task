@@ -51,5 +51,25 @@ export async function userLogin(
     path: "/",
   });
 
-  redirect("/dashboard");
+  redirect("/admin/dashboard");
+}
+
+// ========== LOGOUT ==========
+export async function logout() {
+  const token = (await cookies()).get("token")?.value;
+
+  if (token) {
+    // Optional: Call API to invalidate token on server
+    try {
+      await fetch(`${url}/api/user/logout`, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+    } catch (error) {
+      console.error("Error logging out:", error);
+    }
+  }
+
+  (await cookies()).delete("token");
+  redirect("/admin/login");
 }
