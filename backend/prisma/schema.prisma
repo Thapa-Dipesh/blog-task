@@ -7,36 +7,42 @@
 generator client {
   provider = "prisma-client"
   output   = "../generated/prisma"
-} 
+}
 
 datasource db {
   provider = "postgresql"
 }
 
-model User {
-  id    String     @id @default(cuid())
-  email String  @unique
-  name  String
-  password String
+enum Role {
+  ADMIN
+  AUTHOR
+}
 
-  posts BlogPost[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+model User {
+  id       String @id @default(cuid())
+  email    String @unique
+  name     String
+  password String
+  role     Role   @default(AUTHOR)
+
+  posts     BlogPost[]
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
 }
 
 model BlogPost {
-  id        String     @id @default(cuid())
-  title     String
-  description   String
-  slug String  @unique
-  image String
+  id          String @id @default(cuid())
+  title       String
+  description String
+  slug        String @unique
+  image       String
 
-  metaTitle String?
+  metaTitle       String?
   metaDescription String?
-  keywords String?
+  keywords        String?
 
-  author    User    @relation(fields: [authorId], references: [id])
-  authorId  String
+  author   User   @relation(fields: [authorId], references: [id])
+  authorId String
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

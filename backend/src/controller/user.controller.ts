@@ -80,7 +80,7 @@ export const loginUser = async (req: Request, res: Response) => {
         id: user.id,
         email: user.email,
         name: user.name,
-        role: "AUTHOR", // fallback if role doesn't exist
+        role: user.role,
       },
       process.env.JWT_SECRET as string,
       {
