@@ -46,7 +46,7 @@ const Footer = () => {
                 </li>
                 <li>
                   <Link
-                    href="/my-blogs"
+                    href="/admin/blogs"
                     className="text-sm font-bold text-slate-600 hover:text-orange-500 transition-colors"
                   >
                     Manage
