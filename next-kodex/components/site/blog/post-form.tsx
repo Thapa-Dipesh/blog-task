@@ -1,12 +1,19 @@
-// components/dashboard/post-form.tsx
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Save, Globe, Image as ImageIcon, Search } from 'lucide-react';
-import { Post } from '@/types/post';
 
 interface PostFormProps {
-  initialData?: Partial<Post>;
+  initialData?: {
+    id?: string;
+    title?: string;
+    slug?: string;
+    description?: string;
+    image?: string;
+    metaTitle?: string;
+    metaDescription?: string;
+    keywords?: string;
+  };
   onSubmit: (formData: FormData) => Promise<void>;
   isLoading: boolean;
   submitLabel: string;
@@ -14,6 +21,23 @@ interface PostFormProps {
 
 export function PostForm({ initialData, onSubmit, isLoading, submitLabel }: PostFormProps) {
   const [preview, setPreview] = useState<string>(initialData?.image || '');
+  const [title, setTitle] = useState(initialData?.title || '');
+  const [slug, setSlug] = useState(initialData?.slug || '');
+  const [isSlugTouched, setIsSlugTouched] = useState(!!initialData?.slug);
+
+  const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = e.target.value;
+    setTitle(val);
+    if (!isSlugTouched) {
+      const generatedSlug = val
+        .toLowerCase()
+        .trim()
+        .replace(/[^\w\s-]/g, '')
+        .replace(/[\s_-]+/g, '-')
+        .replace(/^-+|-+$/g, '');
+      setSlug(generatedSlug);
+    }
+  };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -43,7 +67,8 @@ export function PostForm({ initialData, onSubmit, isLoading, submitLabel }: Post
                   <input
                     type="text"
                     name="title"
-                    defaultValue={initialData?.title}
+                    value={title}
+                    onChange={handleTitleChange}
                     placeholder="Article Title"
                     required
                     className="w-full text-4xl font-black tracking-tight text-slate-900 placeholder-slate-200 outline-none border-none focus:ring-0"
@@ -56,10 +81,14 @@ export function PostForm({ initialData, onSubmit, isLoading, submitLabel }: Post
                   <input
                     type="text"
                     name="slug"
-                    defaultValue={initialData?.slug}
+                    value={slug}
+                    onChange={(e) => {
+                      setIsSlugTouched(true);
+                      setSlug(e.target.value);
+                    }}
                     placeholder="url-slug-here"
                     required
-                    className="text-xs font-mono text-orange-600 outline-none bg-transparent placeholder-orange-200"
+                    className="text-xs font-mono text-orange-600 outline-none bg-transparent placeholder-orange-200 flex-1"
                   />
                 </div>
 
@@ -68,7 +97,8 @@ export function PostForm({ initialData, onSubmit, isLoading, submitLabel }: Post
                     name="description"
                     rows={15}
                     defaultValue={initialData?.description}
-                    placeholder="Write your story here..."
+                    placeholder="Write your article content or markdown here..."
+                    required
                     className="w-full resize-none text-lg leading-relaxed text-slate-700 placeholder-slate-300 outline-none border-none focus:ring-0"
                   />
                 </div>
@@ -91,11 +121,13 @@ export function PostForm({ initialData, onSubmit, isLoading, submitLabel }: Post
                 className="w-full text-xs file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-orange-50 file:text-orange-700 hover:file:bg-orange-100"
               />
               {preview && (
-                <img
-                  src={preview}
-                  alt="Preview"
-                  className="mt-4 h-32 w-full rounded-xl object-cover"
-                />
+                <div className="mt-4 overflow-hidden rounded-xl border border-slate-100">
+                  <img
+                    src={preview}
+                    alt="Preview"
+                    className="h-36 w-full object-cover"
+                  />
+                </div>
               )}
             </div>
 
@@ -113,6 +145,7 @@ export function PostForm({ initialData, onSubmit, isLoading, submitLabel }: Post
                     type="text"
                     name="metaTitle"
                     defaultValue={initialData?.metaTitle}
+                    placeholder="SEO title (optional)"
                     className="w-full border-b border-slate-100 py-1 text-sm outline-none focus:border-orange-500"
                   />
                 </div>
@@ -124,6 +157,7 @@ export function PostForm({ initialData, onSubmit, isLoading, submitLabel }: Post
                     name="metaDescription"
                     rows={3}
                     defaultValue={initialData?.metaDescription}
+                    placeholder="Short summary for search engines (optional)"
                     className="w-full border-b border-slate-100 py-1 text-sm outline-none focus:border-orange-500 resize-none"
                   />
                 </div>
@@ -135,7 +169,7 @@ export function PostForm({ initialData, onSubmit, isLoading, submitLabel }: Post
                     type="text"
                     name="keywords"
                     defaultValue={initialData?.keywords}
-                    placeholder="React, Tech, 2026"
+                    placeholder="Next.js, TypeScript, PostgreSQL"
                     className="w-full border-b border-slate-100 py-1 text-sm outline-none focus:border-orange-500"
                   />
                 </div>

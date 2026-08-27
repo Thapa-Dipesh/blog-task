@@ -1,105 +1,90 @@
-// import { Link, NavLink, useNavigate } from "react-router-dom";
-// import {
-//   logOut,
-//   selectCurrentUser,
-//   selectIsLoggedIn,
-// } from "../features/app/authSlice";
-// import { useDispatch, useSelector } from "react-redux";
-// import { useLogoutMutation } from "../features/api/authApi";
-// import toast from "react-hot-toast";
+import Link from "next/link";
+import { getSessionUser } from "@/lib/auth";
+import { logout } from "@/lib/actions/auth.action";
+import { PlusCircle, LayoutDashboard, LogIn, LogOut } from "lucide-react";
 
-// const Navbar = () => {
-//   // Base styles for all links
-//   const baseStyle =
-//     "text-sm font-medium transition-all duration-200 border-b-2 py-1";
+export default async function Navbar() {
+  const user = await getSessionUser();
 
-//   const user = useSelector(selectCurrentUser);
-//   const isLoggedIn = useSelector(selectIsLoggedIn);
-//   const dispatch = useDispatch();
-//   const navigate = useNavigate();
-//   const [logout] = useLogoutMutation();
+  return (
+    <nav className="sticky top-0 z-50 w-full border-b border-slate-200/80 bg-white/80 backdrop-blur-md">
+      <div className="max-w-6xl mx-auto flex items-center justify-between px-6 h-16">
+        {/* Logo / Brand */}
+        <div className="flex items-center gap-8">
+          <Link
+            href="/"
+            className="text-2xl font-black tracking-tighter text-slate-900 group flex items-center"
+          >
+            KODEX
+            <span className="text-orange-600 group-hover:scale-125 transition-transform duration-200">
+              .
+            </span>
+          </Link>
 
-//   const handleLogout = async () => {
-//     await logout().unwrap();
-//     dispatch(logOut());
+          {/* Navigation Links */}
+          <div className="hidden md:flex items-center gap-6">
+            <Link
+              href="/"
+              className="text-sm font-bold text-slate-600 hover:text-slate-900 transition-colors"
+            >
+              Feed
+            </Link>
 
-//     navigate("/login");
-//     toast.success("Logged out successfully");
-//   };
+            {user && (
+              <>
+                <Link
+                  href="/admin/blogs/create"
+                  className="text-sm font-bold text-slate-600 hover:text-slate-900 transition-colors flex items-center gap-1.5"
+                >
+                  <PlusCircle size={15} className="text-orange-600" />
+                  Create Post
+                </Link>
+                <Link
+                  href="/admin/blogs"
+                  className="text-sm font-bold text-slate-600 hover:text-slate-900 transition-colors"
+                >
+                  Manage Content
+                </Link>
+              </>
+            )}
+          </div>
+        </div>
 
-//   return (
-//     <nav className="sticky top-0 z-50 w-full border-b border-gray-100 bg-white/70 backdrop-blur-md">
-//       <div className="max-w-6xl mx-auto flex items-center justify-between px-6 h-16">
-//         {/* Logo / Brand Name */}
-//         <div className="flex items-center">
-//           <Link
-//             to="/"
-//             className="text-xl font-black tracking-tighter text-slate-900"
-//           >
-//             KODEX<span className="text-orange-500">.</span>
-//           </Link>
-//         </div>
+        {/* User / Actions */}
+        <div className="flex items-center gap-3">
+          {user ? (
+            <div className="flex items-center gap-3">
+              <Link
+                href="/admin/dashboard"
+                className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-100 text-slate-800 text-xs font-bold hover:bg-slate-200 transition-colors"
+              >
+                <LayoutDashboard size={14} className="text-slate-600" />
+                <span>{user.name.split(" ")[0]}</span>
+              </Link>
 
-//         {/* Navigation Links */}
-//         <div className="hidden md:flex items-center gap-8">
-//           <NavLink
-//             to="/"
-//             className={({ isActive }) =>
-//               `${baseStyle} ${isActive ? "text-slate-900 border-slate-900" : "text-slate-500 border-transparent hover:text-slate-900 hover:border-slate-200"}`
-//             }
-//           >
-//             Posts
-//           </NavLink>
-
-//           {isLoggedIn && (
-//             <>
-//               <NavLink
-//                 to="/create"
-//                 className={({ isActive }) =>
-//                   `${baseStyle} ${isActive ? "text-slate-900 border-slate-900" : "text-slate-500 border-transparent hover:text-slate-900 hover:border-slate-200"}`
-//                 }
-//               >
-//                 Create Post
-//               </NavLink>
-
-//               <NavLink
-//                 to="/my-blogs"
-//                 className={({ isActive }) =>
-//                   `${baseStyle} ${isActive ? "text-slate-900 border-slate-900" : "text-slate-500 border-transparent hover:text-slate-900 hover:border-slate-200"}`
-//                 }
-//               >
-//                 My Posts
-//               </NavLink>
-//             </>
-//           )}
-//         </div>
-
-//         {/* Action Button */}
-//         <div className="flex items-center justify-center gap-4">
-//           {isLoggedIn ? (
-//             <>
-//               <p>{user?.name.split(" ")[0]}</p>
-//               <button
-//                 onClick={handleLogout}
-//                 className="inline-flex items-center justify-center rounded-full bg-slate-900 px-5 py-2 text-sm font-semibold text-white shadow-sm hover:bg-slate-800 transition-all duration-200 active:scale-95 cursor-pointer"
-//               >
-//                 Log Out
-//               </button>
-//             </>
-//           ) : (
-//             <div>
-//               <Link
-//                 to="/login"
-//                 className="inline-flex items-center justify-center rounded-full bg-slate-900 px-5 py-2 text-sm font-semibold text-white shadow-sm hover:bg-slate-800 transition-all duration-200 active:scale-95"
-//               >
-//                 Admin Login
-//               </Link>
-//             </div>
-//           )}
-//         </div>
-//       </div>
-//     </nav>
-//   );
-// };
-
-// export default Navbar;
+              <form action={logout}>
+                <button
+                  type="submit"
+                  className="inline-flex items-center gap-1.5 rounded-full bg-slate-900 px-4 py-2 text-xs font-bold text-white shadow-sm hover:bg-slate-800 transition-all duration-200 active:scale-95 cursor-pointer"
+                >
+                  <LogOut size={13} />
+                  <span>Log Out</span>
+                </button>
+              </form>
+            </div>
+          ) : (
+            <div className="flex items-center gap-2">
+              <Link
+                href="/admin/login"
+                className="inline-flex items-center gap-1.5 rounded-full bg-slate-900 px-5 py-2 text-xs font-bold text-white shadow-sm hover:bg-slate-800 transition-all duration-200 active:scale-95"
+              >
+                <LogIn size={13} />
+                <span>Admin Login</span>
+              </Link>
+            </div>
+          )}
+        </div>
+      </div>
+    </nav>
+  );
+}

@@ -3,7 +3,7 @@
 import { useActionState } from "react";
 import Link from "next/link";
 import { Lock, Mail } from "lucide-react";
-import { userLogin } from "@/lib/action/user-auth/login.action";
+import { userLogin } from "@/lib/actions/auth.action";
 import { GithubIcon } from "@/constants/SocialIcon";
 
 export function LoginForm() {

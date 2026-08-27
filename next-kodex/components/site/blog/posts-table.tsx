@@ -1,15 +1,23 @@
-// components/dashboard/posts-table.tsx
 "use client";
 
 import { useState } from "react";
 import { Edit3, Eye, Filter, Plus, Search, Trash2 } from "lucide-react";
 import Link from "next/link";
-import { Post } from "@/types/post";
 import { useRouter } from "next/navigation";
-import { deletePost } from "@/lib/action/blog/blog.action";
+import { deletePost } from "@/lib/actions/post.action";
+
+interface PostItem {
+  id: string;
+  title: string;
+  slug: string;
+  description: string;
+  image: string;
+  createdAt: Date | string;
+  published?: boolean;
+}
 
 interface PostsTableProps {
-  posts: Post[];
+  posts: PostItem[];
 }
 
 export function PostsTable({ posts }: PostsTableProps) {
@@ -17,10 +25,10 @@ export function PostsTable({ posts }: PostsTableProps) {
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const router = useRouter();
 
-  const filteredPosts = posts.filter(
+  const filteredPosts = (posts || []).filter(
     (post) =>
-      post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      post.slug.toLowerCase().includes(searchQuery.toLowerCase()),
+      post.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      post.slug?.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   const handleDelete = async (id: string) => {
@@ -32,7 +40,7 @@ export function PostsTable({ posts }: PostsTableProps) {
 
     try {
       await deletePost(id);
-      router.refresh(); // Refresh server data without full page reload
+      router.refresh();
     } catch (error) {
       alert("Failed to delete post. Please try again.");
     } finally {
@@ -75,14 +83,10 @@ export function PostsTable({ posts }: PostsTableProps) {
               placeholder="Search by title or slug..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 bg-slate-50 border-none rounded-xl outline-none focus:ring-2 focus:ring-blue-500 transition-all text-sm"
+              className="w-full pl-10 pr-4 py-2 bg-slate-50 border-none rounded-xl outline-none focus:ring-2 focus:ring-orange-500 transition-all text-sm"
             />
           </div>
-          <div className="flex gap-2">
-            <button className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-50 rounded-xl transition-colors">
-              <Filter size={16} /> Filter
-            </button>
-            <div className="h-8 w-px bg-slate-100 mx-2" />
+          <div className="flex gap-2 items-center">
             <span className="text-sm font-bold text-slate-900 flex items-center">
               {filteredPosts.length} Total Posts
             </span>
@@ -117,7 +121,7 @@ export function PostsTable({ posts }: PostsTableProps) {
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-4">
                       <img
-                        src={post.image}
+                        src={post.image || "https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=1200&q=80"}
                         className="w-12 h-12 rounded-lg object-cover"
                         alt={post.title}
                       />
@@ -135,15 +139,9 @@ export function PostsTable({ posts }: PostsTableProps) {
                     {new Date(post.createdAt).toLocaleDateString()}
                   </td>
                   <td className="px-6 py-4">
-                    {post.published ? (
-                      <span className="px-2 py-1 bg-green-50 text-green-600 text-[10px] font-black rounded uppercase tracking-tighter border border-green-100">
-                        Published
-                      </span>
-                    ) : (
-                      <span className="px-2 py-1 bg-amber-50 text-amber-600 text-[10px] font-black rounded uppercase tracking-tighter border border-amber-100">
-                        Draft
-                      </span>
-                    )}
+                    <span className="px-2 py-1 bg-green-50 text-green-600 text-[10px] font-black rounded uppercase tracking-tighter border border-green-100">
+                      Published
+                    </span>
                   </td>
                   <td className="px-6 py-4">
                     <div className="flex items-center justify-end gap-2">
@@ -157,7 +155,7 @@ export function PostsTable({ posts }: PostsTableProps) {
                       </Link>
                       <Link
                         href={`/admin/blogs/edit/${post.slug}`}
-                        className="p-2 text-slate-400 hover:text-amber-600 hover:bg-amber-50 rounded-lg transition-all"
+                        className="p-2 text-slate-400 hover:text-orange-600 hover:bg-orange-50 rounded-lg transition-all"
                         title="Edit Post"
                       >
                         <Edit3 size={18} />

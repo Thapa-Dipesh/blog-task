@@ -1,37 +1,38 @@
-// components/dashboard/sidebar.tsx
 import Link from "next/link";
-import { LayoutDashboard, FileText, Settings, LogOut } from "lucide-react";
-import { logout } from "@/lib/action/user-auth/login.action";
+import { LayoutDashboard, FileText, PlusCircle, LogOut } from "lucide-react";
+import { logout } from "@/lib/actions/auth.action";
 
-export function DashboardSidebar({ user }: { user: any }) {
+export function DashboardSidebar({ user }: { user: { name?: string; email?: string; role?: string } }) {
   return (
-    <aside className="w-64 bg-white border-r border-slate-200 flex flex-col">
+    <aside className="w-64 bg-white border-r border-slate-200 flex flex-col h-screen sticky top-0">
       <div className="p-6 border-b border-slate-100">
-        <h2 className="text-xl font-black tracking-tight">KODEX.</h2>
-        <p className="text-xs text-slate-400 mt-1">{user.email}</p>
+        <h2 className="text-xl font-black tracking-tight text-slate-900">
+          KODEX<span className="text-orange-600">.</span>
+        </h2>
+        <p className="text-xs text-slate-400 mt-1 truncate">{user?.email}</p>
       </div>
 
       <nav className="flex-1 p-4 space-y-1">
         <Link
-          href="/dashboard"
+          href="/admin/dashboard"
           className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors"
         >
           <LayoutDashboard size={18} />
           Dashboard
         </Link>
         <Link
-          href="/dashboard/posts"
+          href="/admin/blogs"
           className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors"
         >
           <FileText size={18} />
           Posts
         </Link>
         <Link
-          href="/dashboard/settings"
+          href="/admin/blogs/create"
           className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors"
         >
-          <Settings size={18} />
-          Settings
+          <PlusCircle size={18} className="text-orange-600" />
+          Create Post
         </Link>
       </nav>
 
