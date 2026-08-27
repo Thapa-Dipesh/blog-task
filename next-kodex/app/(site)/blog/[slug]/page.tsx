@@ -1,4 +1,4 @@
-import { api } from "@/lib/api";
+import { getPostBySlug } from "@/lib/db/posts";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { SinglePost } from "@/components/site/blog/SinglePost";
@@ -9,22 +9,36 @@ interface BlogPageProps {
 
 export async function generateMetadata({ params }: BlogPageProps): Promise<Metadata> {
   const { slug } = await params;
-  const post = await api.getPost(slug).catch(() => null);
+  const post = await getPostBySlug(slug);
+
+  if (!post) {
+    return {
+      title: "Post Not Found",
+    };
+  }
 
   return {
-    title: post ? `${post.title} | KODEX.` : "Post Not Found",
-    description: post?.description || "",
+    title: post.metaTitle || `${post.title} | KODEX.`,
+    description: post.metaDescription || post.description.slice(0, 160),
+    keywords: post.keywords ? post.keywords.split(",").map((k) => k.trim()) : undefined,
     openGraph: {
-      title: post?.title,
-      description: post?.description,
-      images: post?.image ? [post.image] : [],
+      title: post.metaTitle || post.title,
+      description: post.metaDescription || post.description.slice(0, 160),
+      images: post.image ? [post.image] : [],
+      type: "article",
+      publishedTime: post.createdAt.toISOString(),
+      authors: post.author?.name ? [post.author.name] : undefined,
     },
   };
 }
 
 export default async function BlogPage({ params }: BlogPageProps) {
   const { slug } = await params;
-  const post = await api.getPost(slug).catch(() => notFound());
+  const post = await getPostBySlug(slug);
 
-  return <SinglePost post={post} />;
+  if (!post) {
+    notFound();
+  }
+
+  return <SinglePost post={post as any} />;
 }

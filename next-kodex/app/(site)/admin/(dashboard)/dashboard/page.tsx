@@ -1,6 +1,5 @@
-import { cookies } from "next/headers";
-import { api } from "@/lib/api";
-import { redirect } from "next/navigation";
+import { requireAuth } from "@/lib/auth";
+import { getDashboardStats } from "@/lib/db/posts";
 import Link from "next/link";
 import {
   FileText,
@@ -12,31 +11,13 @@ import {
   CheckCircle,
 } from "lucide-react";
 
-// Fetch dashboard data
-async function getDashboardData(token: string) {
-  const posts = await api.getMyPosts(token).catch(() => []);
-
-  const stats = {
-    totalPosts: posts.length,
-    publishedPosts: posts.filter((p) => p.published).length,
-    draftPosts: posts.filter((p) => !p.published).length,
-    // totalViews: posts.reduce((sum, p) => sum + (p.views || 0), 0),
-    totalViews: 1, // You can fetch this separately
-    totalAuthors: 1, // You can fetch this separately
-  };
-
-  return { posts, stats };
-}
-
 export default async function DashboardPage() {
-  const token = (await cookies()).get("token")?.value;
-  if (!token) redirect("/login");
+  const user = await requireAuth();
+  const stats = await getDashboardStats(user.id);
+  const posts = stats.posts;
 
-  const { posts, stats } = await getDashboardData(token);
-
-  // Calculate trends (mock data for now, replace with real API)
   const viewsTrend = +12.5;
-  const postsTrend = +3;
+  const postsTrend = +stats.totalPosts > 0 ? +stats.totalPosts : null;
 
   return (
     <div className="space-y-8">
@@ -46,7 +27,7 @@ export default async function DashboardPage() {
           Dashboard
         </h1>
         <p className="text-slate-500 mt-1">
-          Welcome back! Here's what's happening with your content.
+          Welcome back, {user.name}! Here&apos;s what&apos;s happening with your content.
         </p>
       </div>
 
@@ -89,7 +70,7 @@ export default async function DashboardPage() {
           <div className="flex items-center justify-between">
             <h2 className="text-xl font-bold text-slate-900">Recent Posts</h2>
             <Link
-              href="/dashboard/blogs"
+              href="/admin/blogs"
               className="text-sm font-medium text-orange-600 hover:text-orange-700 flex items-center gap-1"
             >
               View all <ArrowUpRight size={16} />
@@ -102,7 +83,7 @@ export default async function DashboardPage() {
                 <FileText size={48} className="mx-auto text-slate-200 mb-4" />
                 <p className="text-slate-400">No posts yet</p>
                 <Link
-                  href="/dashboard/blogs/create"
+                  href="/admin/blogs/create"
                   className="text-orange-600 font-medium hover:underline mt-2 inline-block"
                 >
                   Create your first post
@@ -110,7 +91,7 @@ export default async function DashboardPage() {
               </div>
             ) : (
               <div className="divide-y divide-slate-50">
-                {posts.slice(0, 5).map((post) => (
+                {posts.map((post) => (
                   <div
                     key={post.id}
                     className="p-6 flex items-center gap-4 hover:bg-slate-50/50 transition-colors"
@@ -139,16 +120,13 @@ export default async function DashboardPage() {
                           year: "numeric",
                         })}
                         {" · "}
-                        {post.published ? (
-                          <span className="text-green-600">Published</span>
-                        ) : (
-                          <span className="text-amber-600">Draft</span>
-                        )}
+                        <span className="text-green-600 font-medium">Published</span>
                       </p>
                     </div>
                     <Link
-                      href={`/dashboard/blogs/edit/${post.id}`}
+                      href={`/admin/blogs/edit/${post.slug}`}
                       className="p-2 text-slate-400 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition-colors shrink-0"
+                      title="Edit Post"
                     >
                       <ArrowUpRight size={16} />
                     </Link>
@@ -168,18 +146,18 @@ export default async function DashboardPage() {
             </h3>
             <div className="space-y-3">
               <Link
-                href="blogs/create"
+                href="/admin/blogs/create"
                 className="flex items-center gap-3 p-4 rounded-2xl bg-slate-900 text-white hover:bg-slate-800 transition-colors"
               >
                 <FileText size={18} />
                 <span className="font-bold text-sm">Create New Post</span>
               </Link>
               <Link
-                href="blogs"
+                href="/admin/blogs"
                 className="flex items-center gap-3 p-4 rounded-2xl border border-slate-100 text-slate-600 hover:bg-slate-50 transition-colors"
               >
                 <TrendingUp size={18} />
-                <span className="font-bold text-sm">View Analytics</span>
+                <span className="font-bold text-sm">Manage Content</span>
               </Link>
             </div>
           </div>
@@ -187,37 +165,21 @@ export default async function DashboardPage() {
           {/* Content Health */}
           <div className="bg-white rounded-3xl border border-slate-200 p-6">
             <h3 className="text-sm font-black uppercase tracking-widest text-slate-400 mb-4">
-              Content Health
+              Content Overview
             </h3>
             <div className="space-y-4">
               <div>
                 <div className="flex justify-between text-sm mb-1">
-                  <span className="text-slate-600">Published</span>
+                  <span className="text-slate-600">Total Publications</span>
                   <span className="font-bold text-slate-900">
-                    {stats.publishedPosts}/{stats.totalPosts}
+                    {stats.publishedPosts}
                   </span>
                 </div>
                 <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
                   <div
                     className="h-full bg-green-500 rounded-full transition-all"
                     style={{
-                      width: `${stats.totalPosts ? (stats.publishedPosts / stats.totalPosts) * 100 : 0}%`,
-                    }}
-                  />
-                </div>
-              </div>
-              <div>
-                <div className="flex justify-between text-sm mb-1">
-                  <span className="text-slate-600">Drafts</span>
-                  <span className="font-bold text-slate-900">
-                    {stats.draftPosts}/{stats.totalPosts}
-                  </span>
-                </div>
-                <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
-                  <div
-                    className="h-full bg-amber-500 rounded-full transition-all"
-                    style={{
-                      width: `${stats.totalPosts ? (stats.draftPosts / stats.totalPosts) * 100 : 0}%`,
+                      width: `${stats.totalPosts > 0 ? 100 : 0}%`,
                     }}
                   />
                 </div>
@@ -231,19 +193,14 @@ export default async function DashboardPage() {
               Recent Activity
             </h3>
             <div className="space-y-4">
-              {posts.slice(0, 3).map((post, index) => (
+              {posts.slice(0, 3).map((post) => (
                 <div key={post.id} className="flex items-start gap-3">
                   <div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center shrink-0">
-                    {post.published ? (
-                      <CheckCircle size={14} className="text-green-600" />
-                    ) : (
-                      <Clock size={14} className="text-amber-600" />
-                    )}
+                    <CheckCircle size={14} className="text-green-600" />
                   </div>
                   <div>
                     <p className="text-sm text-slate-900 line-clamp-1">
-                      {post.published ? "Published" : "Created draft"}:{" "}
-                      {post.title}
+                      Published: {post.title}
                     </p>
                     <p className="text-xs text-slate-400 mt-0.5">
                       {new Date(post.createdAt).toLocaleDateString()}

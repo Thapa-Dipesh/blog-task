@@ -1,29 +1,14 @@
-import { cookies } from "next/headers";
-import { api } from "@/lib/api";
 import Link from "next/link";
-import { redirect } from "next/navigation";
-import { LayoutDashboard, FileText, Settings, LogOut } from "lucide-react";
-import { logout } from "@/lib/action/user-auth/login.action";
+import { requireAuth } from "@/lib/auth";
+import { LayoutDashboard, FileText, PlusCircle, LogOut } from "lucide-react";
+import { logout } from "@/lib/actions/auth.action";
 
 export default async function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const token = (await cookies()).get("token")?.value;
-
-  console.log("Token from cookie:", token ? "present" : "MISSING");
-
-  if (!token) {
-    redirect("/admin/login");
-  }
-
-  let user;
-  try {
-    user = await api.getMe(token);
-  } catch (error) {
-    redirect("/admin/login");
-  }
+  const user = await requireAuth();
 
   return (
     <div className="min-h-screen bg-slate-50 flex">
@@ -63,18 +48,18 @@ export default async function DashboardLayout({
             Dashboard
           </Link>
           <Link
-            href="/admin/dashboard/blogs"
+            href="/admin/blogs"
             className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors"
           >
             <FileText size={18} />
             Posts
           </Link>
           <Link
-            href="/admin/dashboard/settings"
+            href="/admin/blogs/create"
             className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors"
           >
-            <Settings size={18} />
-            Settings
+            <PlusCircle size={18} className="text-orange-600" />
+            New Post
           </Link>
         </nav>
 

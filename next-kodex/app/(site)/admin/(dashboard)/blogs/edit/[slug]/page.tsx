@@ -1,6 +1,6 @@
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { api } from "@/lib/api";
+import { getPostBySlug } from "@/lib/db/posts";
 import { EditPostForm } from "@/components/site/blog/edit-post-form";
 
 interface EditPageProps {
@@ -11,7 +11,7 @@ export async function generateMetadata({
   params,
 }: EditPageProps): Promise<Metadata> {
   const { slug } = await params;
-  const post = await api.getPost(slug).catch(() => null);
+  const post = await getPostBySlug(slug);
   return {
     title: post ? `Edit: ${post.title} | KODEX.` : "Edit Post | KODEX.",
   };
@@ -19,7 +19,11 @@ export async function generateMetadata({
 
 export default async function EditPostPage({ params }: EditPageProps) {
   const { slug } = await params;
-  const post = await api.getPost(slug).catch(() => notFound());
+  const post = await getPostBySlug(slug);
 
-  return <EditPostForm post={post} />;
+  if (!post) {
+    notFound();
+  }
+
+  return <EditPostForm post={post as any} />;
 }
