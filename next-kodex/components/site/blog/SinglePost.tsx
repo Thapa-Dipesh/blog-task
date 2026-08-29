@@ -122,7 +122,7 @@ export function SinglePost({ post }: SinglePostProps) {
           <img
             src={post.image || "https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=1200&q=80"}
             alt={post.title}
-            className="w-full max-h-[500px] object-cover rounded-4xl shadow-2xl shadow-slate-200"
+            className="w-full max-h-125 object-cover rounded-4xl shadow-2xl shadow-slate-200"
           />
         </div>
 
