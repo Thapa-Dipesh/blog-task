@@ -142,6 +142,10 @@ export async function BlogFeed({ page = 1, search = "", tag = "" }: BlogFeedProp
         <div className="flex flex-col gap-20">
           {posts.map((post: any, index: number) => {
             const isFeatured = index === 0 && pagination.page === 1 && !search && !tag;
+            const cleanExcerpt = (post.description || "")
+              .replace(/<[^>]*>/g, " ")
+              .replace(/\s+/g, " ")
+              .trim();
 
             return (
               <article
@@ -201,7 +205,7 @@ export async function BlogFeed({ page = 1, search = "", tag = "" }: BlogFeedProp
                   </h3>
 
                   <p className="text-slate-500 mt-4 mb-6 text-base leading-relaxed line-clamp-3">
-                    {post.description}
+                    {cleanExcerpt}
                   </p>
 
                   {/* Post Tags */}

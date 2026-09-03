@@ -4,7 +4,7 @@ import { useState } from "react";
 import { ArrowLeft, Clock, Share2, Check, BookOpen } from "lucide-react";
 import Link from "next/link";
 import { LinkedinIcon, TwitterIcon } from "@/constants/SocialIcon";
-import { MarkdownRenderer } from "./markdown-renderer";
+import { RichContentRenderer } from "./rich-content-renderer";
 
 interface SinglePostProps {
   post: {
@@ -27,7 +27,10 @@ interface SinglePostProps {
 
 export function SinglePost({ post }: SinglePostProps) {
   const [copied, setCopied] = useState(false);
-  const wordsCount = post.description ? post.description.split(/\s+/).length : 0;
+
+  // Strip HTML tags for clean word count calculation
+  const textOnly = (post.description || "").replace(/<[^>]*>/g, " ").trim();
+  const wordsCount = textOnly ? textOnly.split(/\s+/).length : 0;
   const readingTime = Math.max(1, Math.ceil(wordsCount / 200));
 
   const handleCopyLink = () => {
@@ -54,7 +57,7 @@ export function SinglePost({ post }: SinglePostProps) {
         <header className="mb-12">
           <div className="flex items-center gap-3 mb-6">
             <span className="bg-orange-50 text-orange-600 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-widest border border-orange-100">
-              Technical Guide
+              Technical Article
             </span>
             <span className="text-slate-300">•</span>
             <div className="flex items-center gap-1.5 text-slate-500 text-sm">
@@ -150,9 +153,9 @@ export function SinglePost({ post }: SinglePostProps) {
           </div>
         )}
 
-        {/* Markdown Rendered Content */}
+        {/* Rich TipTap Rendered Content */}
         <div className="mt-8">
-          <MarkdownRenderer content={post.description} />
+          <RichContentRenderer content={post.description} />
         </div>
 
         {/* Tags / Keywords Section */}

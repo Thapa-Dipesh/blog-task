@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { Save, Globe, Image as ImageIcon, Search } from 'lucide-react';
-import { MarkdownEditor } from './markdown-editor';
+import { TipTapEditor } from './tiptap-editor';
 
 interface PostFormProps {
   initialData?: {
@@ -94,18 +94,17 @@ export function PostForm({ initialData, onSubmit, isLoading, submitLabel }: Post
               </div>
             </div>
 
-            {/* Markdown Rich Content Editor */}
+            {/* TipTap Rich Content Editor */}
             <div>
               <div className="flex items-center justify-between mb-2 px-1">
                 <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">
-                  Article Content (Markdown)
+                  Article Content (TipTap Rich Editor)
                 </label>
               </div>
-              <MarkdownEditor
+              <TipTapEditor
                 name="description"
                 defaultValue={initialData?.description || ""}
-                placeholder="Write your story, technical tutorial, or architecture notes using markdown..."
-                rows={16}
+                placeholder="Draft your story, technical guide, or architecture notes using rich formatting..."
               />
             </div>
           </div>
