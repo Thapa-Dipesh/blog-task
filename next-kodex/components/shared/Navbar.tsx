@@ -1,10 +1,11 @@
 import Link from "next/link";
-import { getSessionUser } from "@/lib/auth";
+import { getSession } from "@/lib/auth";
 import { logout } from "@/lib/actions/auth.action";
-import { PlusCircle, LayoutDashboard, LogIn, LogOut } from "lucide-react";
+import { PlusCircle, LayoutDashboard, LogIn, LogOut, ShieldCheck, Users } from "lucide-react";
 
 export default async function Navbar() {
-  const user = await getSessionUser();
+  const user = await getSession();
+  const isSuper = user?.role === "SUPER_ADMIN";
 
   return (
     <nav className="sticky top-0 z-50 w-full border-b border-slate-200/80 bg-white/80 backdrop-blur-md">
@@ -37,14 +38,23 @@ export default async function Navbar() {
                   className="text-sm font-bold text-slate-600 hover:text-slate-900 transition-colors flex items-center gap-1.5"
                 >
                   <PlusCircle size={15} className="text-orange-600" />
-                  Create Post
+                  Write Post
                 </Link>
                 <Link
                   href="/admin/blogs"
                   className="text-sm font-bold text-slate-600 hover:text-slate-900 transition-colors"
                 >
-                  Manage Content
+                  {isSuper ? "All Publications" : "My Articles"}
                 </Link>
+                {isSuper && (
+                  <Link
+                    href="/admin/users"
+                    className="text-sm font-bold text-amber-700 hover:text-amber-900 transition-colors flex items-center gap-1"
+                  >
+                    <Users size={15} className="text-amber-600" />
+                    User Approvals
+                  </Link>
+                )}
               </>
             )}
           </div>
@@ -56,9 +66,17 @@ export default async function Navbar() {
             <div className="flex items-center gap-3">
               <Link
                 href="/admin/dashboard"
-                className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-100 text-slate-800 text-xs font-bold hover:bg-slate-200 transition-colors"
+                className={`hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-bold transition-colors ${
+                  isSuper
+                    ? "bg-amber-100 text-amber-900 hover:bg-amber-200 border border-amber-200"
+                    : "bg-slate-100 text-slate-800 hover:bg-slate-200"
+                }`}
               >
-                <LayoutDashboard size={14} className="text-slate-600" />
+                {isSuper ? (
+                  <ShieldCheck size={14} className="text-amber-700" />
+                ) : (
+                  <LayoutDashboard size={14} className="text-slate-600" />
+                )}
                 <span>{user.name.split(" ")[0]}</span>
               </Link>
 
@@ -79,7 +97,7 @@ export default async function Navbar() {
                 className="inline-flex items-center gap-1.5 rounded-full bg-slate-900 px-5 py-2 text-xs font-bold text-white shadow-sm hover:bg-slate-800 transition-all duration-200 active:scale-95"
               >
                 <LogIn size={13} />
-                <span>Admin Login</span>
+                <span>Portal Login</span>
               </Link>
             </div>
           )}
