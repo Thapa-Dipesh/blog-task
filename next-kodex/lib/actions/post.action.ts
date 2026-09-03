@@ -76,8 +76,8 @@ export async function updatePost(idOrSlug: string, formData: FormData) {
     throw new Error("Post not found");
   }
 
-  // Verify ownership or ADMIN role
-  if (existingPost.authorId !== user.id && user.role !== "ADMIN") {
+  const isPrivileged = user.role === "SUPER_ADMIN" || user.role === "ADMIN";
+  if (existingPost.authorId !== user.id && !isPrivileged) {
     throw new Error("Unauthorized to modify this post");
   }
 
@@ -135,7 +135,8 @@ export async function deletePost(id: string) {
     throw new Error("Post not found");
   }
 
-  if (post.authorId !== user.id && user.role !== "ADMIN") {
+  const isPrivileged = user.role === "SUPER_ADMIN" || user.role === "ADMIN";
+  if (post.authorId !== user.id && !isPrivileged) {
     throw new Error("Unauthorized to delete this post");
   }
 

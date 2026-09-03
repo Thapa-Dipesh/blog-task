@@ -7,22 +7,29 @@ datasource db {
 }
 
 enum Role {
+  SUPER_ADMIN
   ADMIN
   AUTHOR
 }
 
+enum AccountStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  SUSPENDED
+}
+
 model User {
-  id       String @id @default(cuid())
-  email    String @unique
+  id       String        @id @default(cuid())
+  email    String        @unique
   name     String
   password String
-  role     Role   @default(AUTHOR)
+  role     Role          @default(ADMIN)
+  status   AccountStatus @default(PENDING)
 
   posts     BlogPost[]
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
-
-  @@map("users")
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
 }
 
 model BlogPost {
@@ -36,11 +43,9 @@ model BlogPost {
   metaDescription String?
   keywords        String?
 
-  author   User   @relation(fields: [authorId], references: [id])
+  author   User   @relation(fields: [authorId], references: [id], onDelete: Cascade)
   authorId String
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-
-  @@map("blog_posts")
 }
