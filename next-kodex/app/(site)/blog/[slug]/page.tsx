@@ -20,7 +20,7 @@ export async function generateMetadata({ params }: BlogPageProps): Promise<Metad
   return {
     title: post.metaTitle || `${post.title} | KODEX.`,
     description: post.metaDescription || post.description.slice(0, 160),
-    keywords: post.keywords ? post.keywords.split(",").map((k) => k.trim()) : undefined,
+    keywords: post.keywords ? post.keywords.split(",").map((k: string) => k.trim()) : undefined,
     openGraph: {
       title: post.metaTitle || post.title,
       description: post.metaDescription || post.description.slice(0, 160),

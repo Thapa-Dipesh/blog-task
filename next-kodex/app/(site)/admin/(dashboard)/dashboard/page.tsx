@@ -91,7 +91,7 @@ export default async function DashboardPage() {
               </div>
             ) : (
               <div className="divide-y divide-slate-50">
-                {posts.map((post) => (
+                {posts.map((post: any) => (
                   <div
                     key={post.id}
                     className="p-6 flex items-center gap-4 hover:bg-slate-50/50 transition-colors"
@@ -193,7 +193,7 @@ export default async function DashboardPage() {
               Recent Activity
             </h3>
             <div className="space-y-4">
-              {posts.slice(0, 3).map((post) => (
+              {posts.slice(0, 3).map((post: any) => (
                 <div key={post.id} className="flex items-start gap-3">
                   <div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center shrink-0">
                     <CheckCircle size={14} className="text-green-600" />
