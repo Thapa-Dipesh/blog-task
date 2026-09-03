@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { LayoutDashboard, FileText, PlusCircle, LogOut } from "lucide-react";
+import { LayoutDashboard, FileText, PlusCircle, Settings, LogOut } from "lucide-react";
 import { logout } from "@/lib/actions/auth.action";
 
 export function DashboardSidebar({ user }: { user: { name?: string; email?: string; role?: string } }) {
@@ -33,6 +33,13 @@ export function DashboardSidebar({ user }: { user: { name?: string; email?: stri
         >
           <PlusCircle size={18} className="text-orange-600" />
           Create Post
+        </Link>
+        <Link
+          href="/admin/settings"
+          className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors"
+        >
+          <Settings size={18} />
+          Settings
         </Link>
       </nav>
 
