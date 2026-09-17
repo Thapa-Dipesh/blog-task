@@ -18,7 +18,7 @@ export interface AuthActionState {
   message?: string;
 }
 
-export async function userLogin(
+export async function superAdminLogin(
   prevState: AuthActionState | null,
   formData: FormData
 ): Promise<AuthActionState> {
@@ -35,16 +35,19 @@ export async function userLogin(
   const { email, password } = validation.data;
   const normalizedEmail = email.toLowerCase().trim();
 
-  // 1. Check if user is logging in with Super Admin credentials from .env
   const envSuperEmail = process.env.SUPER_ADMIN_EMAIL?.toLowerCase().trim();
   const envSuperPassword = process.env.SUPER_ADMIN_PASSWORD;
   const envSuperName = process.env.SUPER_ADMIN_NAME || "Super Administrator";
 
-  if (envSuperEmail && envSuperPassword && normalizedEmail === envSuperEmail) {
-    if (password !== envSuperPassword) {
-      return { error: "Invalid super admin credentials" };
-    }
+  if (!envSuperEmail || !envSuperPassword) {
+    return { error: "Super Admin credentials are not configured in system environment." };
+  }
 
+  if (normalizedEmail !== envSuperEmail || password !== envSuperPassword) {
+    return { error: "Invalid Super Admin credentials. Access denied." };
+  }
+
+  try {
     // Ensure Super Admin user exists in Database with SUPER_ADMIN role & APPROVED status
     let superUser = await prisma.user.findUnique({
       where: { email: normalizedEmail },
@@ -80,10 +83,39 @@ export async function userLogin(
     });
 
     await setSessionCookie(token);
-    redirect("/admin/dashboard");
+  } catch (error) {
+    console.error("Super Admin login error:", error);
+    return { error: "An unexpected error occurred during Super Admin authentication." };
   }
 
-  // 2. Regular Admin / Author Authentication via NeonDB
+  redirect("/kodex-admin/dashboard");
+}
+
+export async function userLogin(
+  prevState: AuthActionState | null,
+  formData: FormData
+): Promise<AuthActionState> {
+  const rawData = {
+    email: formData.get("email"),
+    password: formData.get("password"),
+  };
+
+  const validation = loginSchema.safeParse(rawData);
+  if (!validation.success) {
+    return { error: validation.error.issues[0]?.message || "Invalid credentials" };
+  }
+
+  const { email, password } = validation.data;
+  const normalizedEmail = email.toLowerCase().trim();
+
+  const envSuperEmail = process.env.SUPER_ADMIN_EMAIL?.toLowerCase().trim();
+  if (envSuperEmail && normalizedEmail === envSuperEmail) {
+    return {
+      error: "Super Admin accounts must sign in via the Master Console at /kodex-admin/login",
+    };
+  }
+
+  // Regular Admin / Author Authentication via NeonDB
   try {
     const user = await prisma.user.findUnique({
       where: { email: normalizedEmail },
@@ -98,7 +130,7 @@ export async function userLogin(
       return { error: "Incorrect password" };
     }
 
-    // 3. Super Admin Verification Status Check
+    // Super Admin Verification Status Check
     if (user.status === "PENDING") {
       return {
         error:

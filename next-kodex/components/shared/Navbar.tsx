@@ -41,19 +41,28 @@ export default async function Navbar() {
                   <PlusCircle size={15} className="text-orange-600" />
                   Write Post
                 </Link>
-                <Link
-                  href="/admin/blogs"
-                  className="text-sm font-bold text-slate-600 hover:text-slate-900 transition-colors"
-                >
-                  {isSuper ? "All Publications" : "My Articles"}
-                </Link>
-                {isSuper && (
+                {isSuper ? (
+                  <>
+                    <Link
+                      href="/kodex-admin/blogs"
+                      className="text-sm font-bold text-slate-600 hover:text-slate-900 transition-colors"
+                    >
+                      All Publications
+                    </Link>
+                    <Link
+                      href="/kodex-admin/users"
+                      className="text-sm font-bold text-amber-700 hover:text-amber-900 transition-colors flex items-center gap-1"
+                    >
+                      <Users size={15} className="text-amber-600" />
+                      User Approvals
+                    </Link>
+                  </>
+                ) : (
                   <Link
-                    href="/admin/users"
-                    className="text-sm font-bold text-amber-700 hover:text-amber-900 transition-colors flex items-center gap-1"
+                    href="/admin/blogs"
+                    className="text-sm font-bold text-slate-600 hover:text-slate-900 transition-colors"
                   >
-                    <Users size={15} className="text-amber-600" />
-                    User Approvals
+                    My Articles
                   </Link>
                 )}
               </>
@@ -68,7 +77,7 @@ export default async function Navbar() {
           {user ? (
             <div className="flex items-center gap-3">
               <Link
-                href="/admin/dashboard"
+                href={isSuper ? "/kodex-admin/dashboard" : "/admin/dashboard"}
                 className={`hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-bold transition-colors ${
                   isSuper
                     ? "bg-amber-100 text-amber-900 hover:bg-amber-200 border border-amber-200"
@@ -80,7 +89,7 @@ export default async function Navbar() {
                 ) : (
                   <LayoutDashboard size={14} className="text-slate-600" />
                 )}
-                <span>{user.name.split(" ")[0]}</span>
+                <span>{isSuper ? "Master Console" : user.name.split(" ")[0]}</span>
               </Link>
 
               <form action={logout}>

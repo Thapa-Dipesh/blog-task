@@ -1,352 +1,157 @@
 import { requireAuth } from "@/lib/auth";
 import { getDashboardStats } from "@/lib/db/posts";
-import { getSuperAdminDashboardStats } from "@/lib/db/admin";
+import { redirect } from "next/navigation";
 import Link from "next/link";
 import {
   FileText,
   Eye,
   TrendingUp,
   ArrowUpRight,
-  ArrowDownRight,
-  Clock,
-  CheckCircle,
-  Users,
-  ShieldCheck,
-  UserCheck,
-  AlertCircle,
+  PlusCircle,
+  BookOpen,
 } from "lucide-react";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Author Dashboard | KODEX.",
+  description: "Personal author publication metrics and post management.",
+  robots: {
+    index: false,
+    follow: false,
+  },
+};
 
 export default async function DashboardPage() {
   const user = await requireAuth();
-  const isSuper = user.role === "SUPER_ADMIN";
 
-  if (isSuper) {
-    const superStats = await getSuperAdminDashboardStats();
-
-    return (
-      <div className="space-y-8 max-w-7xl mx-auto">
-        {/* Header */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div>
-            <div className="flex items-center gap-2">
-              <span className="px-3 py-1 rounded-full bg-amber-100 text-amber-900 font-black text-xs uppercase tracking-wider flex items-center gap-1 border border-amber-200">
-                <ShieldCheck size={14} /> Super Admin Control Center
-              </span>
-            </div>
-            <h1 className="text-3xl font-black text-slate-900 tracking-tight mt-2">
-              Platform Overview
-            </h1>
-            <p className="text-slate-500 mt-1">
-              Welcome back, {user.name}. Here is the platform-wide governance and activity snapshot.
-            </p>
-          </div>
-
-          <Link
-            href="/admin/users"
-            className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-amber-600 hover:bg-amber-700 text-white text-sm font-bold shadow-lg shadow-amber-200 transition-all active:scale-95 w-fit"
-          >
-            <Users size={18} />
-            Review Pending Users ({superStats.pendingUsers})
-          </Link>
-        </div>
-
-        {/* Super Admin Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <StatCard
-            title="Total Registered Users"
-            value={superStats.totalUsers}
-            icon={<Users size={20} />}
-            trend={null}
-            color="blue"
-          />
-          <StatCard
-            title="Pending Approvals"
-            value={superStats.pendingUsers}
-            icon={<Clock size={20} />}
-            trend={null}
-            color={superStats.pendingUsers > 0 ? "amber" : "green"}
-          />
-          <StatCard
-            title="Active Authors / Admins"
-            value={superStats.approvedAdmins}
-            icon={<UserCheck size={20} />}
-            trend={null}
-            color="green"
-          />
-          <StatCard
-            title="Total Published Articles"
-            value={superStats.totalPosts}
-            icon={<FileText size={20} />}
-            trend={null}
-            color="orange"
-          />
-        </div>
-
-        {/* Super Admin Main Content Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Pending Applications Box */}
-          <div className="lg:col-span-2 space-y-6">
-            <div className="flex items-center justify-between">
-              <h2 className="text-xl font-bold text-slate-900 flex items-center gap-2">
-                <Clock size={20} className="text-amber-600" />
-                Pending Verification Requests
-              </h2>
-              <Link
-                href="/admin/users"
-                className="text-sm font-bold text-amber-600 hover:text-amber-700 flex items-center gap-1"
-              >
-                Manage All <ArrowUpRight size={16} />
-              </Link>
-            </div>
-
-            <div className="bg-white rounded-3xl border border-slate-200 overflow-hidden shadow-sm">
-              {superStats.recentPendingUsers.length === 0 ? (
-                <div className="p-12 text-center">
-                  <CheckCircle size={44} className="mx-auto text-emerald-500 mb-3" />
-                  <h3 className="font-bold text-slate-900">All caught up!</h3>
-                  <p className="text-slate-400 text-xs mt-1">
-                    There are currently no pending registration requests requiring your review.
-                  </p>
-                </div>
-              ) : (
-                <div className="divide-y divide-slate-100">
-                  {superStats.recentPendingUsers.map((u: any) => (
-                    <div
-                      key={u.id}
-                      className="p-5 flex items-center justify-between gap-4 hover:bg-slate-50/60 transition-colors"
-                    >
-                      <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-2xl bg-amber-100 text-amber-800 flex items-center justify-center font-bold text-sm">
-                          {u.name?.[0]?.toUpperCase() || "U"}
-                        </div>
-                        <div>
-                          <div className="font-bold text-slate-900 text-sm">
-                            {u.name}
-                          </div>
-                          <div className="text-xs text-slate-400">
-                            {u.email} · Applied on{" "}
-                            {new Date(u.createdAt).toLocaleDateString()}
-                          </div>
-                        </div>
-                      </div>
-
-                      <Link
-                        href="/admin/users"
-                        className="px-4 py-2 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold transition-all shadow-xs"
-                      >
-                        Review
-                      </Link>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            {/* Recent Publications Across Platform */}
-            <div className="space-y-4 pt-4">
-              <div className="flex items-center justify-between">
-                <h2 className="text-xl font-bold text-slate-900">
-                  Recent Platform Publications
-                </h2>
-                <Link
-                  href="/admin/blogs"
-                  className="text-sm font-bold text-orange-600 hover:text-orange-700 flex items-center gap-1"
-                >
-                  View All <ArrowUpRight size={16} />
-                </Link>
-              </div>
-
-              <div className="bg-white rounded-3xl border border-slate-200 overflow-hidden shadow-sm divide-y divide-slate-100">
-                {superStats.recentPosts.map((post: any) => (
-                  <div
-                    key={post.id}
-                    className="p-5 flex items-center justify-between gap-4 hover:bg-slate-50/50 transition-colors"
-                  >
-                    <div className="flex items-center gap-4 min-w-0">
-                      <img
-                        src={
-                          post.image ||
-                          "https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=1200&q=80"
-                        }
-                        alt={post.title}
-                        className="w-12 h-12 rounded-xl object-cover border border-slate-100 shrink-0"
-                      />
-                      <div className="min-w-0">
-                        <div className="font-bold text-slate-900 truncate text-sm">
-                          {post.title}
-                        </div>
-                        <div className="text-xs text-slate-400">
-                          by {post.author?.name || "Author"} ·{" "}
-                          {new Date(post.createdAt).toLocaleDateString()}
-                        </div>
-                      </div>
-                    </div>
-
-                    <Link
-                      href={`/blog/${post.slug}`}
-                      target="_blank"
-                      className="p-2 text-slate-400 hover:text-orange-600 hover:bg-orange-50 rounded-xl transition-all shrink-0"
-                      title="View Article"
-                    >
-                      <ArrowUpRight size={16} />
-                    </Link>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          {/* Super Admin Quick Actions */}
-          <div className="space-y-6">
-            <div className="bg-white rounded-3xl border border-slate-200 p-6 shadow-sm">
-              <h3 className="text-xs font-black uppercase tracking-widest text-slate-400 mb-4">
-                Platform Actions
-              </h3>
-              <div className="space-y-3">
-                <Link
-                  href="/admin/users"
-                  className="flex items-center gap-3 p-4 rounded-2xl bg-slate-900 text-white hover:bg-slate-800 transition-colors"
-                >
-                  <Users size={18} className="text-amber-400" />
-                  <span className="font-bold text-sm">User Approvals</span>
-                </Link>
-                <Link
-                  href="/admin/blogs/create"
-                  className="flex items-center gap-3 p-4 rounded-2xl border border-slate-100 text-slate-700 hover:bg-slate-50 transition-colors"
-                >
-                  <FileText size={18} className="text-orange-600" />
-                  <span className="font-bold text-sm">Write Platform Article</span>
-                </Link>
-                <Link
-                  href="/"
-                  target="_blank"
-                  className="flex items-center gap-3 p-4 rounded-2xl border border-slate-100 text-slate-700 hover:bg-slate-50 transition-colors"
-                >
-                  <TrendingUp size={18} className="text-blue-600" />
-                  <span className="font-bold text-sm">View Public Blog Feed</span>
-                </Link>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
+  // If Super Admin visits /admin/dashboard, redirect to the Master Console
+  if (user.role === "SUPER_ADMIN") {
+    redirect("/kodex-admin/dashboard");
   }
 
-  // Regular Admin / Author View
+  // Regular Author View
   const stats = await getDashboardStats(user.id);
   const posts = stats.posts;
 
   return (
-    <div className="space-y-8 max-w-7xl mx-auto">
+    <div className="space-y-8 max-w-6xl mx-auto">
       {/* Header */}
-      <div>
-        <h1 className="text-3xl font-black text-slate-900 tracking-tight">
-          Author Dashboard
-        </h1>
-        <p className="text-slate-500 mt-1">
-          Welcome back, {user.name}! Here is what is happening with your publications.
-        </p>
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <h1 className="text-3xl font-black text-slate-900 tracking-tight">
+            Author Dashboard
+          </h1>
+          <p className="text-slate-500 mt-1">
+            Welcome back, <strong className="text-slate-900">{user.name}</strong>! Here is an overview of your publication activity.
+          </p>
+        </div>
+
+        <Link
+          href="/admin/blogs/create"
+          className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-slate-900 hover:bg-slate-800 text-white text-sm font-bold shadow-lg shadow-slate-900/10 transition-all active:scale-95 w-fit"
+        >
+          <PlusCircle size={18} className="text-orange-500" />
+          <span>Write New Article</span>
+        </Link>
       </div>
 
-      {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      {/* Author Stats Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         <StatCard
           title="My Articles"
           value={stats.totalPosts}
           icon={<FileText size={20} />}
-          trend={null}
           color="blue"
         />
         <StatCard
-          title="Published"
+          title="Published Articles"
           value={stats.publishedPosts}
-          icon={<CheckCircle size={20} />}
-          trend={null}
+          icon={<TrendingUp size={20} />}
           color="green"
+        />
+        <StatCard
+          title="Estimated Views"
+          value={stats.totalViews}
+          icon={<Eye size={20} />}
+          color="orange"
         />
         <StatCard
           title="Drafts"
           value={stats.draftPosts}
-          icon={<Clock size={20} />}
-          trend={null}
+          icon={<FileText size={20} />}
           color="amber"
-        />
-        <StatCard
-          title="Estimated Reads"
-          value={stats.totalViews.toLocaleString()}
-          icon={<Eye size={20} />}
-          trend={+12.5}
-          color="orange"
         />
       </div>
 
       {/* Main Content Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <div className="lg:col-span-2 space-y-6">
+        {/* Recent Posts Table */}
+        <div className="lg:col-span-2 space-y-4">
           <div className="flex items-center justify-between">
-            <h2 className="text-xl font-bold text-slate-900">Recent Publications</h2>
+            <h2 className="text-xl font-bold text-slate-900">
+              My Recent Articles
+            </h2>
             <Link
               href="/admin/blogs"
-              className="text-sm font-medium text-orange-600 hover:text-orange-700 flex items-center gap-1"
+              className="text-sm font-bold text-orange-600 hover:text-orange-700 flex items-center gap-1"
             >
-              View all <ArrowUpRight size={16} />
+              <span>View All</span>
+              <ArrowUpRight size={16} />
             </Link>
           </div>
 
-          <div className="bg-white rounded-3xl border border-slate-200 overflow-hidden shadow-sm">
+          <div className="bg-white rounded-3xl border border-slate-200 overflow-hidden shadow-2xs">
             {posts.length === 0 ? (
               <div className="p-12 text-center">
-                <FileText size={48} className="mx-auto text-slate-200 mb-4" />
-                <p className="text-slate-400">No posts yet</p>
+                <BookOpen className="mx-auto text-slate-300 mb-3" size={40} />
+                <h3 className="text-base font-bold text-slate-800">
+                  No articles published yet
+                </h3>
+                <p className="text-xs text-slate-400 mt-1 max-w-sm mx-auto">
+                  Start drafting your first technical breakdown using the rich TipTap editor.
+                </p>
                 <Link
                   href="/admin/blogs/create"
-                  className="text-orange-600 font-medium hover:underline mt-2 inline-block"
+                  className="mt-5 inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-slate-900 text-white text-xs font-bold hover:bg-slate-800 transition-all shadow-sm"
                 >
-                  Create your first post
+                  <PlusCircle size={14} className="text-orange-500" />
+                  <span>Create Your First Post</span>
                 </Link>
               </div>
             ) : (
-              <div className="divide-y divide-slate-50">
+              <div className="divide-y divide-slate-100">
                 {posts.map((post: any) => (
                   <div
                     key={post.id}
-                    className="p-6 flex items-center gap-4 hover:bg-slate-50/50 transition-colors"
+                    className="p-4 sm:p-5 flex items-center justify-between gap-4 hover:bg-slate-50 transition-colors"
                   >
-                    <div className="w-12 h-12 rounded-xl bg-slate-100 overflow-hidden shrink-0 border border-slate-100">
-                      {post.image ? (
-                        <img
-                          src={post.image}
-                          alt={post.title}
-                          className="w-full h-full object-cover"
-                        />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center text-slate-300">
-                          <FileText size={20} />
-                        </div>
-                      )}
-                    </div>
                     <div className="flex-1 min-w-0">
-                      <h3 className="font-bold text-slate-900 truncate">
-                        {post.title}
-                      </h3>
+                      <h4 className="text-sm font-bold text-slate-900 truncate">
+                        <Link
+                          href={`/blog/${post.slug}`}
+                          className="hover:text-orange-600 transition-colors"
+                        >
+                          {post.title}
+                        </Link>
+                      </h4>
                       <p className="text-xs text-slate-400 mt-0.5">
+                        Published on{" "}
                         {new Date(post.createdAt).toLocaleDateString("en-US", {
                           month: "short",
                           day: "numeric",
                           year: "numeric",
                         })}
-                        {" · "}
-                        <span className="text-green-600 font-medium">Published</span>
                       </p>
                     </div>
-                    <Link
-                      href={`/admin/blogs/edit/${post.slug}`}
-                      className="p-2 text-slate-400 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition-colors shrink-0"
-                      title="Edit Post"
-                    >
-                      <ArrowUpRight size={16} />
-                    </Link>
+
+                    <div className="flex items-center gap-2 shrink-0">
+                      <Link
+                        href={`/admin/blogs/edit/${post.slug}`}
+                        className="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-xs font-bold text-slate-700 transition-colors"
+                      >
+                        Edit
+                      </Link>
+                    </div>
                   </div>
                 ))}
               </div>
@@ -354,25 +159,33 @@ export default async function DashboardPage() {
           </div>
         </div>
 
+        {/* Quick Actions Sidebar */}
         <div className="space-y-6">
-          <div className="bg-white rounded-3xl border border-slate-200 p-6 shadow-sm">
+          <div className="bg-white rounded-3xl border border-slate-200 p-6 shadow-2xs">
             <h3 className="text-xs font-black uppercase tracking-widest text-slate-400 mb-4">
-              Quick Actions
+              Author Quick Actions
             </h3>
             <div className="space-y-3">
               <Link
                 href="/admin/blogs/create"
                 className="flex items-center gap-3 p-4 rounded-2xl bg-slate-900 text-white hover:bg-slate-800 transition-colors"
               >
-                <FileText size={18} />
-                <span className="font-bold text-sm">Draft New Article</span>
+                <PlusCircle size={18} className="text-orange-500" />
+                <span className="font-bold text-sm">Write New Post</span>
               </Link>
               <Link
                 href="/admin/blogs"
-                className="flex items-center gap-3 p-4 rounded-2xl border border-slate-100 text-slate-600 hover:bg-slate-50 transition-colors"
+                className="flex items-center gap-3 p-4 rounded-2xl border border-slate-200 text-slate-700 hover:bg-slate-50 transition-colors"
               >
-                <TrendingUp size={18} />
+                <FileText size={18} className="text-orange-600" />
                 <span className="font-bold text-sm">Manage My Articles</span>
+              </Link>
+              <Link
+                href="/"
+                className="flex items-center gap-3 p-4 rounded-2xl border border-slate-200 text-slate-700 hover:bg-slate-50 transition-colors"
+              >
+                <TrendingUp size={18} className="text-blue-600" />
+                <span className="font-bold text-sm">View Public Feed</span>
               </Link>
             </div>
           </div>
@@ -386,39 +199,33 @@ function StatCard({
   title,
   value,
   icon,
-  trend,
-  color,
+  color = "blue",
 }: {
   title: string;
   value: number | string;
   icon: React.ReactNode;
-  trend: number | null;
-  color: "blue" | "green" | "amber" | "orange";
+  color?: "blue" | "green" | "orange" | "amber";
 }) {
   const colorMap = {
-    blue: "bg-blue-50 text-blue-600",
-    green: "bg-emerald-50 text-emerald-600",
-    amber: "bg-amber-50 text-amber-600",
-    orange: "bg-orange-50 text-orange-600",
+    blue: "bg-blue-50 text-blue-700 border-blue-100",
+    green: "bg-emerald-50 text-emerald-700 border-emerald-100",
+    orange: "bg-orange-50 text-orange-700 border-orange-100",
+    amber: "bg-amber-50 text-amber-700 border-amber-200",
   };
 
   return (
-    <div className="bg-white rounded-3xl border border-slate-200 p-6 shadow-sm">
+    <div className="p-6 rounded-3xl bg-white border border-slate-200 shadow-2xs flex flex-col justify-between">
       <div className="flex items-center justify-between mb-4">
-        <div className={`p-3 rounded-2xl ${colorMap[color]}`}>{icon}</div>
-        {trend !== null && (
-          <span
-            className={`flex items-center gap-1 text-xs font-bold ${
-              trend >= 0 ? "text-emerald-600" : "text-red-600"
-            }`}
-          >
-            {trend >= 0 ? <ArrowUpRight size={14} /> : <ArrowDownRight size={14} />}
-            {Math.abs(trend)}%
-          </span>
-        )}
+        <span className="text-xs font-bold uppercase tracking-wider text-slate-400">
+          {title}
+        </span>
+        <div className={`p-2.5 rounded-2xl border ${colorMap[color]}`}>
+          {icon}
+        </div>
       </div>
-      <p className="text-3xl font-black text-slate-900">{value}</p>
-      <p className="text-xs font-medium text-slate-400 mt-1">{title}</p>
+      <div className="text-3xl font-black text-slate-900 tracking-tight font-mono">
+        {value}
+      </div>
     </div>
   );
 }

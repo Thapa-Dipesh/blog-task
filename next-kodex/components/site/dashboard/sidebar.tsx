@@ -25,6 +25,16 @@ export function DashboardSidebar({
       </div>
 
       <nav className="flex-1 p-4 space-y-1">
+        {isSuper && (
+          <Link
+            href="/kodex-admin/dashboard"
+            className="flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl text-xs font-bold bg-amber-50 text-amber-900 border border-amber-200 hover:bg-amber-100 transition-colors mb-2"
+          >
+            <ShieldCheck size={16} className="text-amber-700 shrink-0" />
+            <span>Switch to Master Console</span>
+          </Link>
+        )}
+
         <Link
           href="/admin/dashboard"
           className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors"
@@ -33,29 +43,12 @@ export function DashboardSidebar({
           Dashboard
         </Link>
 
-        {isSuper && (
-          <Link
-            href="/admin/users"
-            className="flex items-center justify-between px-4 py-3 rounded-xl text-sm font-bold text-slate-700 hover:bg-amber-50/70 hover:text-amber-900 transition-colors"
-          >
-            <div className="flex items-center gap-3">
-              <Users size={18} className="text-amber-600" />
-              <span>User Approvals</span>
-            </div>
-            {pendingCount > 0 && (
-              <span className="w-5 h-5 rounded-full bg-amber-500 text-white text-[10px] flex items-center justify-center font-bold">
-                {pendingCount}
-              </span>
-            )}
-          </Link>
-        )}
-
         <Link
           href="/admin/blogs"
           className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors"
         >
           <FileText size={18} />
-          {isSuper ? "All Publications" : "My Posts"}
+          My Articles
         </Link>
 
         <Link

@@ -76,7 +76,10 @@ export async function requireAuth(): Promise<UserSession> {
 }
 
 export async function requireSuperAdmin(): Promise<UserSession> {
-  const session = await requireAuth();
+  const session = await getSession();
+  if (!session) {
+    redirect("/kodex-admin/login");
+  }
   if (session.role !== "SUPER_ADMIN") {
     redirect("/admin/dashboard");
   }
