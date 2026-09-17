@@ -40,5 +40,72 @@ export default async function BlogPage({ params }: BlogPageProps) {
     notFound();
   }
 
-  return <SinglePost post={post as any} />;
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
+
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    headline: post.title,
+    description: post.metaDescription || post.description.replace(/<[^>]*>/g, " ").slice(0, 160),
+    image: post.image ? [post.image] : [],
+    datePublished: post.createdAt.toISOString(),
+    dateModified: (post.updatedAt || post.createdAt).toISOString(),
+    author: {
+      "@type": "Person",
+      name: post.author?.name || "KODEX Contributor",
+    },
+    publisher: {
+      "@type": "Organization",
+      name: "KODEX.",
+      url: siteUrl,
+      logo: {
+        "@type": "ImageObject",
+        url: `${siteUrl}/favicon.ico`,
+      },
+    },
+    mainEntityOfPage: {
+      "@type": "WebPage",
+      "@id": `${siteUrl}/blog/${post.slug}`,
+    },
+    keywords: post.keywords || undefined,
+  };
+
+  const breadcrumbsJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: "Home",
+        item: siteUrl,
+      },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: "Blog",
+        item: `${siteUrl}/#blog-feed`,
+      },
+      {
+        "@type": "ListItem",
+        position: 3,
+        name: post.title,
+        item: `${siteUrl}/blog/${post.slug}`,
+      },
+    ],
+  };
+
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbsJsonLd) }}
+      />
+      <SinglePost post={post as any} />
+    </>
+  );
 }
