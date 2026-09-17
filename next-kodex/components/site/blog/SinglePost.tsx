@@ -171,7 +171,7 @@ export function SinglePost({ post }: SinglePostProps) {
                 return (
                   <Link
                     key={cleanTag}
-                    href={`/?tag=${encodeURIComponent(cleanTag)}`}
+                    href={`/tag/${encodeURIComponent(cleanTag)}`}
                     className="text-xs font-mono bg-slate-100 text-slate-700 hover:bg-orange-50 hover:text-orange-600 px-3 py-1.5 rounded-xl transition-colors font-medium border border-slate-200/50"
                   >
                     #{cleanTag}

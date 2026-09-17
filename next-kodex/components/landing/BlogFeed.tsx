@@ -211,14 +211,19 @@ export async function BlogFeed({ page = 1, search = "", tag = "" }: BlogFeedProp
                   {/* Post Tags */}
                   {post.keywords && (
                     <div className="flex flex-wrap gap-1.5 mb-6">
-                      {post.keywords.split(",").slice(0, 3).map((k: string) => (
-                        <span
-                          key={k}
-                          className="text-[11px] font-mono px-2.5 py-0.5 bg-slate-100 text-slate-600 rounded-lg"
-                        >
-                          #{k.trim()}
-                        </span>
-                      ))}
+                      {post.keywords.split(",").slice(0, 3).map((k: string) => {
+                        const cleanK = k.trim();
+                        if (!cleanK) return null;
+                        return (
+                          <Link
+                            key={cleanK}
+                            href={`/tag/${encodeURIComponent(cleanK)}`}
+                            className="text-[11px] font-mono px-2.5 py-0.5 bg-slate-100 hover:bg-orange-50 hover:text-orange-600 text-slate-600 rounded-lg transition-colors border border-slate-200/40"
+                          >
+                            #{cleanK}
+                          </Link>
+                        );
+                      })}
                     </div>
                   )}
 
