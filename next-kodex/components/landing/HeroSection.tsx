@@ -30,19 +30,24 @@ const HeroSection = () => {
           architectural patterns for the next generation of web engineers.
         </p>
 
-        <div className="flex flex-wrap justify-center gap-4">
+        <div className="flex flex-wrap justify-center items-center gap-4">
           <Link
             href="/#blog-feed"
             aria-label="Click to explore the blog feed"
-            className="px-8 py-4 bg-slate-900 text-white font-bold rounded-2xl hover:bg-slate-800 transition-all active:scale-95 shadow-xl shadow-slate-200 cursor-pointer"
+            className="px-8 py-4 bg-slate-900 text-white font-bold rounded-2xl hover:bg-slate-800 transition-all active:scale-95 shadow-xl shadow-slate-200 cursor-pointer text-sm"
           >
             Explore Feed
           </Link>
-          <div className="flex items-center gap-6 px-8 py-4 border border-slate-100 rounded-2xl text-slate-400">
-            <Code2 size={20} />
-            <Cpu size={20} />
-            <Globe size={20} />
-          </div>
+          <button
+            type="button"
+            onClick={() => window.dispatchEvent(new CustomEvent("open-command-palette"))}
+            className="flex items-center gap-2.5 px-6 py-4 bg-slate-100 hover:bg-slate-200 border border-slate-200/80 text-slate-800 font-bold rounded-2xl transition-all active:scale-95 cursor-pointer text-sm"
+          >
+            <span>Spotlight Search</span>
+            <kbd className="px-2 py-0.5 text-xs font-mono font-bold bg-white text-slate-500 border border-slate-200 rounded-lg shadow-2xs">
+              ⌘K
+            </kbd>
+          </button>
         </div>
       </div>
 

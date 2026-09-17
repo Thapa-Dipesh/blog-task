@@ -206,6 +206,143 @@ export async function getUserPosts(authorId: string) {
   }
 }
 
+export async function getTagsWithCounts(): Promise<{ tag: string; count: number }[]> {
+  try {
+    const posts = await prisma.blogPost.findMany({
+      select: {
+        keywords: true,
+      },
+    });
+
+    const tagMap = new Map<string, number>();
+    for (const post of posts) {
+      if (post.keywords) {
+        const tags = post.keywords.split(",");
+        for (const t of tags) {
+          const trimmed = t.trim().toLowerCase();
+          if (trimmed.length > 1) {
+            tagMap.set(trimmed, (tagMap.get(trimmed) || 0) + 1);
+          }
+        }
+      }
+    }
+
+    return Array.from(tagMap.entries())
+      .map(([tag, count]) => ({ tag, count }))
+      .sort((a, b) => b.count - a.count);
+  } catch (error) {
+    console.error("Error fetching tags with counts:", error);
+    return [];
+  }
+}
+
+export async function getPostsByTag(tag: string, page = 1, limit = 6) {
+  try {
+    const cleanTag = tag.trim().toLowerCase();
+    const whereConditions = {
+      keywords: {
+        contains: cleanTag,
+        mode: "insensitive" as const,
+      },
+    };
+
+    const total = await prisma.blogPost.count({
+      where: whereConditions,
+    });
+
+    const totalPages = Math.ceil(total / limit) || 1;
+    const validPage = Math.min(Math.max(1, page), Math.max(1, totalPages));
+
+    const posts = await prisma.blogPost.findMany({
+      where: whereConditions,
+      include: {
+        author: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+          },
+        },
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+      skip: (validPage - 1) * limit,
+      take: limit,
+    });
+
+    return {
+      posts,
+      pagination: {
+        total,
+        page: validPage,
+        limit,
+        totalPages,
+        hasNext: validPage < totalPages,
+        hasPrev: validPage > 1,
+      },
+    };
+  } catch (error) {
+    console.error(`Error fetching posts by tag (${tag}):`, error);
+    return {
+      posts: [],
+      pagination: {
+        total: 0,
+        page: 1,
+        limit,
+        totalPages: 1,
+        hasNext: false,
+        hasPrev: false,
+      },
+    };
+  }
+}
+
+export async function searchPostsForPalette(query: string) {
+  const trimmed = query.trim();
+  if (!trimmed) return [];
+
+  try {
+    const posts = await prisma.blogPost.findMany({
+      where: {
+        OR: [
+          { title: { contains: trimmed, mode: "insensitive" } },
+          { description: { contains: trimmed, mode: "insensitive" } },
+          { keywords: { contains: trimmed, mode: "insensitive" } },
+          {
+            author: {
+              name: { contains: trimmed, mode: "insensitive" },
+            },
+          },
+        ],
+      },
+      select: {
+        id: true,
+        title: true,
+        slug: true,
+        description: true,
+        keywords: true,
+        image: true,
+        createdAt: true,
+        author: {
+          select: {
+            name: true,
+          },
+        },
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+      take: 8,
+    });
+
+    return posts;
+  } catch (error) {
+    console.error("Error in searchPostsForPalette:", error);
+    return [];
+  }
+}
+
 export async function getDashboardStats(authorId?: string) {
   try {
     const whereClause = authorId ? { authorId } : {};

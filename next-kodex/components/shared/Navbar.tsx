@@ -2,6 +2,7 @@ import Link from "next/link";
 import { getSession } from "@/lib/auth";
 import { logout } from "@/lib/actions/auth.action";
 import { PlusCircle, LayoutDashboard, LogIn, LogOut, ShieldCheck, Users } from "lucide-react";
+import SearchTrigger from "@/components/site/search/search-trigger";
 
 export default async function Navbar() {
   const user = await getSession();
@@ -62,6 +63,8 @@ export default async function Navbar() {
 
         {/* User / Actions */}
         <div className="flex items-center gap-3">
+          <SearchTrigger />
+
           {user ? (
             <div className="flex items-center gap-3">
               <Link
