@@ -336,3 +336,35 @@ body {
   font-weight: 800;
   color: #0f172a;
 }
+
+/* Journal X Editorial Typography & UI Utilities */
+.display-hero {
+  font-size: clamp(2.25rem, 5vw, 4.25rem);
+  font-weight: 900;
+  line-height: 1.08;
+  letter-spacing: -0.04em;
+}
+
+.display-section {
+  font-size: clamp(1.75rem, 3.5vw, 2.75rem);
+  font-weight: 900;
+  line-height: 1.15;
+  letter-spacing: -0.03em;
+}
+
+.card-editorial-overlay {
+  background: linear-gradient(180deg, rgba(2, 6, 23, 0) 0%, rgba(2, 6, 23, 0.4) 40%, rgba(2, 6, 23, 0.95) 100%);
+}
+
+.card-category-overlay {
+  background: linear-gradient(180deg, rgba(2, 6, 23, 0.1) 0%, rgba(2, 6, 23, 0.65) 60%, rgba(2, 6, 23, 0.96) 100%);
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
